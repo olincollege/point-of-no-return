@@ -1,6 +1,10 @@
+"""
+Sprites in **INSERT TITLE**
+"""
+
 import pygame
 from pygame.sprite import Sprite
-import consants
+import constants
 
 
 class Character(Sprite):
@@ -10,13 +14,16 @@ class Character(Sprite):
     Attributes:
         _speed: maximum speed in pixels per second
     """
-    def __init__(self, speed, image_path=None, transparent=(0, 0, 0)):
+    def __init__(self, speed, spawn_pos=None, image_path=None,
+                 transparent=(0, 0, 0)):
         """
         Initializes the character by setting surf and rect, and setting the
         given image.
 
         Args:
             speed: int, the max character speed in pixels/second
+            spawn_pos: tuple of 2 ints, where to spawn this character, defaults
+                to top left
             image_path: string giving the path to the character art. Defaults
                 to None, which will set a white 50x50 square
             transparent: tuple of 3 ints giving the color (RGB) to make
@@ -29,7 +36,11 @@ class Character(Sprite):
         else:
             self.surf = pygame.image.load(image_path).convert()
             self.surf.set_colorkey(transparent, pygame.RLEACCEL)
-        self.rect = self.surf.get_rect()
+
+        if spawn_pos is None:
+            self.rect = self.surf.get_rect()
+        else:
+            self.rect = self.surf.get_rect(center=spawn_pos)
         self._speed = speed
 
     @property
@@ -38,7 +49,7 @@ class Character(Sprite):
 
     @property
     def frame_speed(self):
-        return self._speed / consants.FRAME_RATE
+        return self._speed / constants.FRAME_RATE
 
     def update(self, direction):
         """
@@ -60,15 +71,34 @@ class Player(Character):
         """
         Initializes the player
         """
-        super().__init__(consants.PLAYER_SPEED)
+        super().__init__(constants.PLAYER_SPEED)
 
 
 class Demon(Character):
     """
     A sprite for all the enemies
     """
-    def __init__(self):
+    def __init__(self, spawn_pos=None):
         """
         Initializes the demon
+
+        Args:
+            spawn_pos: a tuple of 2 ints, where to spawn the demon, defaults
+                to top left
         """
-        super().__init__(consants.DEMON_SPEED)
+        super().__init__(constants.DEMON_SPEED, spawn_pos)
+
+
+class Obstacle(Character):
+    """
+    A sprite for game obstacles
+    """
+    def __init__(self, spawn_pos=None):
+        """
+        Initializes the obstacle
+
+        Args:
+            spawn_pos: a tuple of 2 ints, where to spawn the demon, defaults
+                to top left
+        """
+        super().__init__(constants.OBSTACLE_SPEED, spawn_pos)
