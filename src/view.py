@@ -46,13 +46,26 @@ class GraphicView(View):
         pygame.init()
         self._screen = pygame.display.set_mode((constants.SCREEN_WIDTH,
                                                 constants.SCREEN_HEIGHT))
-        self._screen.fill((0, 0, 0))
+        self._screen.fill((0, 0, 255))
 
     def draw(self):
         """
         Displays the current game state
         """
-        self._screen.fill((0, 0, 0))
+        self._screen.fill((0, 0, 255))
         for entity in self._game.all_sprites:
             self._screen.blit(entity.surf, entity.rect)
+
+        player_pos = self._game.player.rect.center
+        light = pygame.Surface(constants.SCREEN_SIZE, pygame.SRCALPHA)
+        light.fill((0, 0, 0, 0))
+        pygame.draw.circle(light, (0, 0, 0, constants.LIGHT_DIFF), player_pos,
+                           constants.LIGHT_SIZE)
+
+        dark = pygame.Surface(constants.SCREEN_SIZE, pygame.SRCALPHA)
+        dark.fill((0, 0, 0, constants.DARKNESS))
+
+        dark.blit(light, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
+        self._screen.blit(dark, (0, 0))
+
         pygame.display.flip()
