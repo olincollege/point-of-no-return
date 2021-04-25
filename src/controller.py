@@ -87,6 +87,8 @@ class DemonController(Controller):
             direction = (player_pos[0] - demon.rect.centerx,
                          player_pos[1] - demon.rect.centery)
             dist = (direction[0] ** 2 + direction[1] ** 2) ** 0.5
+            if dist == 0:
+                continue
             demon.update((direction[0] / dist, direction[1] / dist))
 
 
