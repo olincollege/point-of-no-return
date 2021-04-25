@@ -4,6 +4,7 @@ Sprites in **INSERT TITLE**
 
 import pygame
 from pygame.sprite import Sprite
+from math import atan2
 import constants
 
 
@@ -32,13 +33,17 @@ class Character(Sprite):
         super().__init__()
         if image_path is None:
             self.surf = pygame.Surface((50, 50))
-            self.surf.fill((255, 255, 255))
+            if isinstance(self, Obstacle):
+                self.surf.fill((255, 0, 0))
+            else:
+                self.surf.fill((255, 255, 255))
         else:
             self.surf = pygame.image.load(image_path).convert()
             self.surf.set_colorkey(transparent, pygame.RLEACCEL)
 
         if spawn_pos is None:
-            self.rect = self.surf.get_rect()
+            self.rect = self.surf.get_rect(center=(constants.SCREEN_WIDTH/2,
+                                                   constants.SCREEN_HEIGHT/2))
         else:
             self.rect = self.surf.get_rect(center=spawn_pos)
         self._speed = speed
@@ -72,6 +77,25 @@ class Player(Character):
         Initializes the player
         """
         super().__init__(constants.PLAYER_SPEED)
+        self._current_direction = (0, 0)
+
+    @property
+    def current_direction(self):
+        """
+        Returns the direction the player is currently traveling
+        """
+        return self._current_direction
+
+    @property
+    def current_angle(self):
+        """
+        Returns the angle the player is currently facing
+        """
+        return atan2(self._current_direction[1], self._current_direction[0])
+
+    def update(self, direction):
+        super().update((direction[0], 0))
+        self._current_direction = direction
 
 
 class Demon(Character):

@@ -1,6 +1,6 @@
 import pygame
 import constants
-from controller import PlayerController, DemonController, ObstacleController
+from controller import PlayerController, DemonController, ScrollController
 from game import Game
 from utils import new_event
 from view import GraphicView
@@ -8,7 +8,7 @@ from view import GraphicView
 game = Game()
 player = PlayerController(game, game.player)
 demons = DemonController(game, game.demons)
-obstacles = ObstacleController(game, game.obstacles)
+all_sprites = ScrollController(game, game.all_sprites)
 view = GraphicView(game)
 view.setup()
 
@@ -34,6 +34,6 @@ while running:
 
     player.update()
     demons.update()
-    obstacles.update()
+    all_sprites.update()
     view.draw()
     clock.tick(constants.FRAME_RATE)

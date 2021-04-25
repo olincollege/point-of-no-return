@@ -7,6 +7,7 @@ from pygame.locals import (
     K_RIGHT,
 )
 import constants
+from sprites import Player
 
 
 class Controller(ABC):
@@ -89,16 +90,17 @@ class DemonController(Controller):
             demon.update((direction[0] / dist, direction[1] / dist))
 
 
-class ObstacleController(Controller):
+class ScrollController(Controller):
     """
-    Controls the obstacles
+    Controls all sprites to make the game scroll with player
     """
 
     def update(self):
         """
-        Updates the obstacle positions
+        Updates all sprite positions
         """
-        for obstacle in self.sprite:
-            obstacle.update((0, 1))
-            if obstacle.rect.top > constants.SCREEN_HEIGHT:
-                obstacle.kill()
+        for entity in self.sprite:
+            if not isinstance(entity, Player):
+                entity.update((0, -self.game.player.current_direction[1]
+                               * self.game.player.frame_speed
+                               / entity.frame_speed))
