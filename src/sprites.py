@@ -33,7 +33,8 @@ class Character(Sprite):
         super().__init__()
         if image_path is None:
             self.surf = pygame.Surface((50, 50))
-            if isinstance(self, Obstacle):
+            # Just to see difference, make Demons red
+            if isinstance(self, Demon):
                 self.surf.fill((255, 0, 0))
             else:
                 self.surf.fill((255, 255, 255))
@@ -58,14 +59,25 @@ class Character(Sprite):
 
     def update(self, direction):
         """
-        Updates the character's current position
+        Updates the character's current position and does any other necessary
+        changes to the character's state.
 
         Args:
             direction: tuple of 2 floats from -1 to 1, x/y coordinates of
                 target speed as percentage of max
         """
-        self.rect.move_ip(direction[0] * self.frame_speed,
-                          direction[1] * self.frame_speed)
+        self.move((direction[0] * self.frame_speed,
+                   direction[1] * self.frame_speed))
+
+    def move(self, direction):
+        """
+        Moves the character's current position a certain number of pixels
+
+        Args:
+            direction: tuple of 2 floats from -1 to 1, x/y coordinates of
+                target speed as percentage of max
+        """
+        self.rect.move_ip(direction[0], direction[1])
 
 
 class Player(Character):

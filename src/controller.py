@@ -101,6 +101,5 @@ class ScrollController(Controller):
         """
         for entity in self.sprite:
             if not isinstance(entity, Player):
-                entity.update((0, -self.game.player.current_direction[1]
-                               * self.game.player.frame_speed
-                               / entity.frame_speed))
+                entity.move((0, -self.game.player.current_direction[1]
+                             * self.game.player.frame_speed))
