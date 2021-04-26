@@ -222,7 +222,7 @@ class Player(MovingSprite):
                          'player')
 
 
-class Demon(GameSprite):
+class Demon(MovingSprite):
     """
     A sprite for all the enemies
     """
@@ -234,7 +234,8 @@ class Demon(GameSprite):
             spawn_pos: a tuple of 2 ints, where to spawn the demon, defaults
                 to top left
         """
-        super().__init__(constants.DEMON_FPS, spawn_pos)
+        super().__init__(constants.DEMON_SPEED, constants.DEMON_FPS, spawn_pos,
+                         'demon')
 
 
 class Obstacle(GameSprite):
@@ -249,4 +250,4 @@ class Obstacle(GameSprite):
             spawn_pos: a tuple of 2 ints, where to spawn the demon, defaults
                 to top left
         """
-        super().__init__(4, spawn_pos)
+        super().__init__(4, spawn_pos, 'obstacle')

@@ -89,7 +89,7 @@ class DemonController(Controller):
             dist = (direction[0] ** 2 + direction[1] ** 2) ** 0.5
             if dist == 0:
                 continue
-            demon.move((direction[0] / dist, direction[1] / dist))
+            demon.update((direction[0] / dist, direction[1] / dist))
 
 
 class ScrollController(Controller):
