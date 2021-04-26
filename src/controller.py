@@ -105,3 +105,5 @@ class ScrollController(Controller):
             if not isinstance(entity, Player):
                 entity.move((0, -self.game.player.current_direction[1]
                              * self.game.player.frame_speed))
+        for obs in self.game.obstacles:
+            obs.update()
