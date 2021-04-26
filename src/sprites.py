@@ -140,11 +140,8 @@ class MovingSprite(GameSprite):
                     f'../media/images/{image_path}/{direction}/' +
                     f'{counter}.png').convert_alpha())
                 counter += 1
-            print(direction)
-            print(f'still_{direction}')
             self._animations[f'still_{direction}'] =\
                 [self._animations[direction][0]]
-        print(self._animations)
         self._speed = speed
         self._current_direction = (0, 0)
         self._current_facing = Direction.DOWN
