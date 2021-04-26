@@ -35,17 +35,21 @@ class GraphicView(View):
     Draws game in pygame graphic window
     """
 
-    def __init__(self, game):
+    def __init__(self, game, screen):
+        """
+        Initializes a graphical view
+
+        Args:
+            game: a Game, the game model to monitor
+            screen: the Screen to display the graphics on
+        """
         super().__init__(game)
-        self._screen = None
+        self._screen = screen
 
     def setup(self):
         """
         Sets up the pygame screen
         """
-        pygame.init()
-        self._screen = pygame.display.set_mode((constants.SCREEN_WIDTH,
-                                                constants.SCREEN_HEIGHT))
         self._screen.fill((0, 0, 255))
 
     def draw(self):

@@ -7,11 +7,13 @@ from view import GraphicView
 
 
 def main():
+    pygame.init()
+    screen = pygame.display.set_mode(constants.SCREEN_SIZE)
     game = Game()
     player = PlayerController(game, game.player)
     demons = DemonController(game, game.demons)
     all_sprites = ScrollController(game, game.all_sprites)
-    view = GraphicView(game)
+    view = GraphicView(game, screen)
     view.setup()
 
     ADD_DEMON = new_event()

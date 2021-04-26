@@ -89,7 +89,7 @@ class DemonController(Controller):
             dist = (direction[0] ** 2 + direction[1] ** 2) ** 0.5
             if dist == 0:
                 continue
-            demon.update((direction[0] / dist, direction[1] / dist))
+            demon.move((direction[0] / dist, direction[1] / dist))
 
 
 class ScrollController(Controller):
@@ -102,8 +102,7 @@ class ScrollController(Controller):
         Updates all sprite positions
         """
         for entity in self.sprite:
-            if not isinstance(entity, Player):
-                entity.move((0, -self.game.player.current_direction[1]
-                             * self.game.player.frame_speed))
+            entity.move((0, -self.game.player.current_direction[1]
+                         * self.game.player.frame_speed))
         for obs in self.game.obstacles:
             obs.update()
