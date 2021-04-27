@@ -191,9 +191,9 @@ class MovingSprite(GameSprite):
             if -45 <= angle <= 45:
                 self._current_facing = Direction.RIGHT
             elif 45 < angle < 135:
-                self._current_facing = Direction.UP
-            elif -135 < angle < -45:
                 self._current_facing = Direction.DOWN
+            elif -135 < angle < -45:
+                self._current_facing = Direction.UP
             elif abs(angle) >= 135:
                 self._current_facing = Direction.LEFT
             self._current_animation = repr(self.current_facing)

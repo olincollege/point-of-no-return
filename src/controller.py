@@ -56,7 +56,6 @@ class PlayerController(Controller):
         """
         Updates the player state
         """
-
         pressed_keys = pygame.key.get_pressed()
         direction = [pressed_keys[K_RIGHT] - pressed_keys[K_LEFT],
                      pressed_keys[K_DOWN] - pressed_keys[K_UP]]
@@ -69,7 +68,6 @@ class PlayerController(Controller):
             constants.SCREEN_HEIGHT) or (direction[1] < 0 and
                                          self.sprite.rect.top <= 0):
             direction[1] = 0
-
         self.sprite.update((direction[0], direction[1]))
 
 
