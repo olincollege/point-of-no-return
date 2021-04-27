@@ -51,6 +51,8 @@ class PlayerController(Controller):
     """
     Controls the player with player input
     """
+    def __init__(self, game):
+        super().__init__(game, game.player)
 
     def update(self):
         """
@@ -81,6 +83,8 @@ class DemonController(Controller):
     """
     Controls the demons
     """
+    def __init__(self, game):
+        super().__init__(game, game.demons)
 
     def update(self):
         """
@@ -100,6 +104,8 @@ class ScrollController(Controller):
     """
     Controls all sprites to make the game scroll with player
     """
+    def __init__(self, game):
+        super().__init__(game, game.all_sprites)
 
     def update(self):
         """
