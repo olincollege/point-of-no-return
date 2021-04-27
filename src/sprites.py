@@ -39,7 +39,6 @@ class GameSprite(Sprite):
         _animations: a dictionary with animation sequence names as keys and
             lists of images representing each sequence as values
         _animation_frame: an int, the current frame of the animation
-        _current_animation: a string, the current animation sequence
         _frame_length: a float, the number of game frames each animation frame
             runs
     """
@@ -66,7 +65,6 @@ class GameSprite(Sprite):
             counter += 1
         self.surf = self._animations['stills'][0]
         self._animation_frame = 0
-        self._current_animation = 'stills'
 
         if spawn_pos is None:
             self.rect = self.surf.get_rect(center=(constants.SCREEN_WIDTH/2,
@@ -76,16 +74,15 @@ class GameSprite(Sprite):
 
     @property
     def current_animation(self):
-        return self._current_animation
+        return 'stills'
 
     def update(self):
         """
         Updates the character's current animation and does any other necessary
         changes to the character's state.
         """
-
         self._animation_frame += 1
-        self._animation_frame %= len(self._animations[self._current_animation])\
+        self._animation_frame %= len(self._animations[self.current_animation])\
             * self._frame_length
         self.surf = self._animations[self.current_animation]\
             [int(self._animation_frame // self._frame_length)]
@@ -167,6 +164,21 @@ class MovingSprite(GameSprite):
     def current_facing(self):
         return self._current_facing
 
+    @property
+    def current_animation(self):
+        if self._current_direction == (0, 0):
+            return f'still_{repr(self.current_facing)}'
+        angle = self.current_angle
+        if -45 <= angle <= 45:
+            self._current_facing = Direction.RIGHT
+        elif 45 < angle < 135:
+            self._current_facing = Direction.DOWN
+        elif -135 < angle < -45:
+            self._current_facing = Direction.UP
+        elif abs(angle) >= 135:
+            self._current_facing = Direction.LEFT
+        return repr(self.current_facing)
+
     def update(self, direction):
         """
         Updates the character's current position and does any other necessary
@@ -176,21 +188,8 @@ class MovingSprite(GameSprite):
             direction: tuple of 2 floats from -1 to 1, x/y coordinates of
                 target speed as percentage of max
         """
-        super().update()
         self._current_direction = direction
-        if direction == (0, 0):
-            self._current_animation = f'still_{repr(self.current_facing)}'
-        else:
-            angle = self.current_angle
-            if -45 <= angle <= 45:
-                self._current_facing = Direction.RIGHT
-            elif 45 < angle < 135:
-                self._current_facing = Direction.DOWN
-            elif -135 < angle < -45:
-                self._current_facing = Direction.UP
-            elif abs(angle) >= 135:
-                self._current_facing = Direction.LEFT
-            self._current_animation = repr(self.current_facing)
+        super().update()
         self.move((direction[0] * self.frame_speed,
                    direction[1] * self.frame_speed))
 
@@ -242,21 +241,22 @@ class AttackingSprite(MovingSprite):
     def is_attacking(self):
         return self._attacking
 
+    @property
+    def current_animation(self):
+        if self.is_attacking:
+            return f'attack_{repr(self.current_facing)}'
+        return super().current_animation
+
     def attack(self):
         self._attacking = True
         self._animation_frame = 0
-        self._current_animation = f'attack_{repr(self.current_facing)}'
 
     def update(self, direction):
         super().update(direction)
-        if self._attacking:
-            self._current_animation = f'attack_{repr(self.current_facing)}'
-            self.surf = self._animations[self.current_animation]\
-                [int(self._animation_frame // self._frame_length)]
-            if self._animation_frame == len(
-                    self._animations[self._current_animation]) * int(
+        if self._attacking and self._animation_frame == len(
+                    self._animations[self.current_animation]) * int(
                     self._frame_length) - 1:
-                self._attacking = False
+            self._attacking = False
 
 
 class Player(AttackingSprite):
