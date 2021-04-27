@@ -10,9 +10,9 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode(constants.SCREEN_SIZE)
     game = Game()
-    player = PlayerController(game, game.player)
-    demons = DemonController(game, game.demons)
-    all_sprites = ScrollController(game, game.all_sprites)
+    player = PlayerController(game)
+    demons = DemonController(game)
+    all_sprites = ScrollController(game)
     view = GraphicView(game, screen)
     view.setup()
 
