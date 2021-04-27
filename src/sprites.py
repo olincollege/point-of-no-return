@@ -251,8 +251,11 @@ class AttackingSprite(MovingSprite):
         super().update(direction)
         if self._attacking:
             self._current_animation = f'attack_{repr(self.current_facing)}'
+            self.surf = self._animations[self.current_animation]\
+                [int(self._animation_frame // self._frame_length)]
             if self._animation_frame == len(
-                    self._animations[self._current_animation]):
+                    self._animations[self._current_animation]) * int(
+                    self._frame_length) - 1:
                 self._attacking = False
 
 

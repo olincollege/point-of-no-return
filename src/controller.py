@@ -6,6 +6,7 @@ from pygame.locals import (
     K_a,
     K_d,
     K_SPACE,
+    KEYDOWN,
 )
 import constants
 
@@ -59,7 +60,7 @@ class PlayerController(Controller):
         Updates the player state
         """
         pressed_keys = pygame.key.get_pressed()
-        if pressed_keys[K_SPACE]:
+        if pressed_keys[K_SPACE] and not self.sprite.is_attacking:
             self.sprite.attack()
 
         if self.sprite.is_attacking:
