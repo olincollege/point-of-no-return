@@ -1,13 +1,13 @@
 from abc import ABC, abstractmethod
 import pygame
 from pygame.locals import (
-    K_UP,
-    K_DOWN,
-    K_LEFT,
-    K_RIGHT,
+    K_w,
+    K_s,
+    K_a,
+    K_d,
+    K_SPACE,
 )
 import constants
-from sprites import Player
 
 
 class Controller(ABC):
@@ -57,18 +57,24 @@ class PlayerController(Controller):
         Updates the player state
         """
         pressed_keys = pygame.key.get_pressed()
-        direction = [pressed_keys[K_RIGHT] - pressed_keys[K_LEFT],
-                     pressed_keys[K_DOWN] - pressed_keys[K_UP]]
-        if (direction[0] > 0 and self.sprite.rect.right >=
-            constants.SCREEN_WIDTH) or (direction[0] < 0 and
-                                        self.sprite.rect.left <= 0):
-            direction[0] = 0
+        if pressed_keys[K_SPACE]:
+            self.sprite.attack()
 
-        if (direction[1] > 0 and self.sprite.rect.bottom >=
-            constants.SCREEN_HEIGHT) or (direction[1] < 0 and
-                                         self.sprite.rect.top <= 0):
-            direction[1] = 0
-        self.sprite.update((direction[0], direction[1]))
+        if self.sprite.is_attacking:
+            self.sprite.update((0, 0))
+        else:
+            direction = [pressed_keys[K_d] - pressed_keys[K_a],
+                         pressed_keys[K_s] - pressed_keys[K_w]]
+            if (direction[0] > 0 and self.sprite.rect.right >=
+                constants.SCREEN_WIDTH) or (direction[0] < 0 and
+                                            self.sprite.rect.left <= 0):
+                direction[0] = 0
+
+            if (direction[1] > 0 and self.sprite.rect.bottom >=
+                constants.SCREEN_HEIGHT) or (direction[1] < 0 and
+                                             self.sprite.rect.top <= 0):
+                direction[1] = 0
+            self.sprite.update((direction[0], direction[1]))
 
 
 class DemonController(Controller):

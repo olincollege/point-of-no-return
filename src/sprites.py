@@ -43,7 +43,7 @@ class GameSprite(Sprite):
         _frame_length: a float, the number of game frames each animation frame
             runs
     """
-    def __init__(self, fps, spawn_pos=None, image_path=None):
+    def __init__(self, fps, image_path, spawn_pos=None):
         """
         Initializes the character by setting surf and rect, and setting the
         given image.
@@ -52,24 +52,19 @@ class GameSprite(Sprite):
             fps: a float, how many animation frames to do each second
             spawn_pos: tuple of 2 ints, where to spawn this character, defaults
                 to top left
-            image_path: string giving the path to the character art. Defaults
-                to None, which will set a white 50x50 square
+            image_path: string giving the path to the character art
         """
         super().__init__()
         self._frame_length = constants.FRAME_RATE / fps
-        if image_path is None:
-            self.surf = pygame.Surface((50, 50))
-            self.surf.fill((255, 255, 255))
-        else:
-            self._animations = {'stills': []}
-            counter = 0
-            while(os.access(f'../media/images/{image_path}/{counter}.png',
-                            os.F_OK)):
-                self._animations['stills'].append(pygame.image.load(
-                    f'../media/images/{image_path}/{counter}.png')
-                                                  .convert_alpha())
-                counter += 1
-            self.surf = self._animations['stills'][0]
+        self._animations = {'stills': []}
+        counter = 0
+        while(os.access(f'../media/images/{image_path}/{counter}.png',
+                        os.F_OK)):
+            self._animations['stills'].append(pygame.image.load(
+                f'../media/images/{image_path}/{counter}.png')
+                                              .convert_alpha())
+            counter += 1
+        self.surf = self._animations['stills'][0]
         self._animation_frame = 0
         self._current_animation = 'stills'
 
@@ -107,7 +102,7 @@ class GameSprite(Sprite):
 
 class MovingSprite(GameSprite):
     """
-    A sprite class to represent a basic character
+    A sprite class to represent a basic character that can move
 
     Attributes:
         _speed: maximum speed in pixels per second
@@ -117,20 +112,19 @@ class MovingSprite(GameSprite):
         _current_facing: a Direction (Up, Down, Left, Right), which way this
             sprite is currently facing
     """
-    def __init__(self, speed, fps, spawn_pos=None, image_path=None):
+    def __init__(self, speed, fps, image_path, spawn_pos=None):
         """
         Initializes the character by setting surf and rect, and setting the
-        given image.
+        animation frame images.
 
         Args:
             speed: int, the max character speed in pixels/second
             fps: a float, how many animation frames to do each second
             spawn_pos: tuple of 2 ints, where to spawn this character, defaults
                 to top left
-            image_path: string giving the path to the character art. Defaults
-                to None, which will set a white 50x50 square
+            image_path: string giving the path to the character art
         """
-        super().__init__(fps, spawn_pos, image_path)
+        super().__init__(fps, image_path, spawn_pos)
         for direction in ("up", "down", "left", "right"):
             self._animations[direction] = []
             counter = 0
@@ -144,7 +138,7 @@ class MovingSprite(GameSprite):
                 [self._animations[direction][0]]
         self._speed = speed
         self._current_direction = (0, 0)
-        self._current_facing = Direction.DOWN
+        self._current_facing = Direction.UP
 
     @property
     def speed(self):
@@ -210,7 +204,59 @@ class MovingSprite(GameSprite):
         self.rect.move_ip(delta_pos[0], delta_pos[1])
 
 
-class Player(MovingSprite):
+class AttackingSprite(MovingSprite):
+    """
+    A sprite for a character that can attack
+
+    Attributes:
+        _attacking: a boolean, True if the sprite is currently attacking and
+            False if not
+    """
+    def __init__(self, speed, fps, image_path, spawn_pos=None):
+        """
+        Initializes the character by setting surf and rect, and setting the
+        animation images.
+
+        Args:
+            speed: int, the max character speed in pixels/second
+            fps: a float, how many animation frames to do each second
+            spawn_pos: tuple of 2 ints, where to spawn this character, defaults
+                to top left
+            image_path: string giving the path to the character art. Defaults
+                to None, which will set a white 50x50 square
+        """
+        super().__init__(speed, fps, image_path, spawn_pos)
+        for direction in ("attack_up", "attack_down", "attack_left",
+                          "attack_right"):
+            self._animations[direction] = []
+            counter = 0
+            while (os.access(f'../media/images/{image_path}/{direction}/' +
+                             f'{counter}.png', os.F_OK)):
+                self._animations[direction].append(pygame.image.load(
+                    f'../media/images/{image_path}/{direction}/' +
+                    f'{counter}.png').convert_alpha())
+                counter += 1
+        self._attacking = False
+
+    @property
+    def is_attacking(self):
+        return self._attacking
+
+    def attack(self):
+        self._attacking = True
+        self._animation_frame = 0
+        self._current_animation = f'attack_{repr(self.current_facing)}'
+
+    def update(self, direction):
+        super().update(direction)
+        if self._attacking:
+            self._current_animation = f'attack_{repr(self.current_facing)}'
+            if self._animation_frame == len(
+                    self._animations[self._current_animation]):
+                self._attacking = False
+
+
+class Player(AttackingSprite):
     """
     A sprite for the player
     """
@@ -218,8 +264,8 @@ class Player(MovingSprite):
         """
         Initializes the player
         """
-        super().__init__(constants.PLAYER_SPEED, constants.PLAYER_FPS, None,
-                         'player')
+        super().__init__(constants.PLAYER_SPEED, constants.PLAYER_FPS,
+                         'player', None)
 
 
 class Demon(MovingSprite):
@@ -234,8 +280,8 @@ class Demon(MovingSprite):
             spawn_pos: a tuple of 2 ints, where to spawn the demon, defaults
                 to top left
         """
-        super().__init__(constants.DEMON_SPEED, constants.DEMON_FPS, spawn_pos,
-                         'demon')
+        super().__init__(constants.DEMON_SPEED, constants.DEMON_FPS,
+                         'demon', spawn_pos)
 
 
 class Obstacle(GameSprite):
@@ -250,4 +296,4 @@ class Obstacle(GameSprite):
             spawn_pos: a tuple of 2 ints, where to spawn the demon, defaults
                 to top left
         """
-        super().__init__(4, spawn_pos, 'obstacle')
+        super().__init__(4, 'obstacle', spawn_pos)
