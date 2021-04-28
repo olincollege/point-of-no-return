@@ -4,6 +4,10 @@ SCREEN_HEIGHT = 600
 SCREEN_SIZE = (SCREEN_WIDTH, SCREEN_HEIGHT)
 FRAME_RATE = 30
 
+# Media constants
+IMAGE_FOLDER = '../media/images'
+AUDIO_FOLDER = '../media/audio'
+
 # Sprite speeds
 PLAYER_SPEED = 150
 DEMON_SPEED = 150

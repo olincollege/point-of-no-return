@@ -4,11 +4,13 @@ Sprites in **INSERT TITLE**
 
 from datetime import datetime
 from enum import Enum
+import json
 import os
 import pygame
 from pygame.sprite import Sprite
 from math import atan2, pi
 import constants
+import utils
 
 
 class Direction(Enum):
@@ -40,8 +42,6 @@ class GameSprite(Sprite):
         _animations: a dictionary with animation sequence names as keys and
             lists of images representing each sequence as values
         _animation_frame: an int, the current frame of the animation
-        _frame_length: a float, the number of game frames each animation frame
-            runs
     """
     def __init__(self, fps, image_path, spawn_pos=None):
         """
@@ -55,19 +55,11 @@ class GameSprite(Sprite):
                 to top left
         """
         super().__init__()
-        self._frame_length = constants.FRAME_RATE / fps
         # Creates animations dictionary and a key for the still images
-        self._animations = {'stills': []}
-        counter = 0
-        # Adds base images to the animations dictionary
-        while(os.access(f'../media/images/{image_path}/{counter}.png',
-                        os.F_OK)):
-            self._animations['stills'].append(pygame.image.load(
-                f'../media/images/{image_path}/{counter}.png')
-                                              .convert_alpha())
-            counter += 1
+        self._animations = {'stills': utils.get_animation_info(
+            f'../media/images/{image_path}')}
         # Sets current character image to the first still
-        self.surf = self._animations['stills'][0]
+        self.surf = self._animations['stills']['animations'][0]
         self._animation_frame = 0
         # Default spawn position is the center of the screen
         if spawn_pos is None:
@@ -81,19 +73,18 @@ class GameSprite(Sprite):
         """
         Returns the current animation type for the character
         """
-        return 'stills'
+        return self._animations['stills']
 
     def update(self):
         """
         Updates the character's current animation and does any other necessary
         changes to the character's state.
         """
-        if self._animation_frame >= len(self._animations[
-                                           self.current_animation])\
-                * self._frame_length:
+        if self._animation_frame >= len(self.current_animation['animations'])\
+                * self.current_animation['frame_length']:
             self._animation_frame = 0
-        self.surf = self._animations[self.current_animation]\
-            [int(self._animation_frame // self._frame_length)]
+        self.surf = self.current_animation['animations'][int(
+            self._animation_frame // self.current_animation['frame_length'])]
         self._animation_frame += 1
 
     def move(self, delta_pos):
@@ -133,19 +124,18 @@ class MovingSprite(GameSprite):
         super().__init__(fps, image_path, spawn_pos)
         # Add the images for the other animation types to the animations
         # dictionary
+        path = f'{constants.IMAGE_FOLDER}/{image_path}'
         for direction in ("up", "down", "left", "right"):
-            self._animations[direction] = []
-            counter = 0
-            while (os.access(f'../media/images/{image_path}/{direction}/' +
-                             f'{counter}.png', os.F_OK)):
-                self._animations[direction].append(pygame.image.load(
-                    f'../media/images/{image_path}/{direction}/' +
-                    f'{counter}.png').convert_alpha())
-                counter += 1
-            # Set the still images for the sprite to the first frame in each
-            # moving direction
-            self._animations[f'still_{direction}'] =\
-                [self._animations[direction][0]]
+            self._animations[direction] = utils.get_animation_info(
+                f'{path}/{direction}')
+            still = f'still_{direction}'
+            self._animations[still] = {}
+            self._animations[still]['animations'] =\
+                self._animations[direction]['animations'][0:1]
+            self._animations[still]['frame_length'] =\
+                self._animations[direction]['frame_length']
+            self._animations[still]['positions'] =\
+                self._animations[direction]['positions'][0:1]
         self._speed = speed
         self._current_direction = (0, 0)
         self._current_facing = Direction.UP
@@ -192,7 +182,7 @@ class MovingSprite(GameSprite):
         Returns the current animation type of the sprite
         """
         if self._current_direction == (0, 0):
-            return f'still_{repr(self.current_facing)}'
+            return self._animations[f'still_{repr(self.current_facing)}']
         angle = self.current_angle
         if -45 <= angle <= 45:
             self._current_facing = Direction.RIGHT
@@ -202,7 +192,7 @@ class MovingSprite(GameSprite):
             self._current_facing = Direction.UP
         elif abs(angle) >= 135:
             self._current_facing = Direction.LEFT
-        return repr(self.current_facing)
+        return self._animations[repr(self.current_facing)]
 
     def update(self, direction):
         """
@@ -249,16 +239,11 @@ class AttackingSprite(MovingSprite):
                 to None, which will set a white 50x50 square
         """
         super().__init__(speed, fps, image_path, spawn_pos)
-        for direction in ("attack_up", "attack_down", "attack_left",
+        path = f'{constants.IMAGE_FOLDER}/{image_path}'
+        for animation in ("attack_up", "attack_down", "attack_left",
                           "attack_right"):
-            self._animations[direction] = []
-            counter = 0
-            while (os.access(f'../media/images/{image_path}/{direction}/' +
-                             f'{counter}.png', os.F_OK)):
-                self._animations[direction].append(pygame.image.load(
-                    f'../media/images/{image_path}/{direction}/' +
-                    f'{counter}.png').convert_alpha())
-                counter += 1
+            self._animations[animation] = utils.get_animation_info(
+                f'{path}/{animation}')
         self._attacking = False
 
     @property
@@ -268,7 +253,7 @@ class AttackingSprite(MovingSprite):
     @property
     def current_animation(self):
         if self.is_attacking:
-            return f'attack_{repr(self.current_facing)}'
+            return self._animations[f'attack_{repr(self.current_facing)}']
         return super().current_animation
 
     def attack(self):
@@ -278,8 +263,8 @@ class AttackingSprite(MovingSprite):
     def update(self, direction):
         super().update(direction)
         if self._attacking and self._animation_frame == len(
-                    self._animations[self.current_animation]) * int(
-                    self._frame_length):
+                    self.current_animation['animations']) * int(
+                    self.current_animation['frame_length']):
             self._attacking = False
 
 
