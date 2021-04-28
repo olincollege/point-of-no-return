@@ -234,8 +234,24 @@ class AttackingSprite(MovingSprite):
     Attributes:
         _attacking: a boolean, True if the sprite is currently attacking and
             False if not
+        _max_health: an int representing the maximum health of the sprite
+        _health: an int representing the sprite's current health
+        _max_invincibility: an int representing how many frames the sprite has
+            invincibility after being attacked
+        _invincibility: an int representing how many more frames this sprite is
+            invincible for
+        _max_knockback: an int representing how
+        _knockback: an int representing how many more frames this sprite is
+            being knocked-back for
+        _knockback_dist: an int representing how many pixels the sprite gets
+            knocked-back after an attack
+        _knockback_direction: a tuple of two floats representing which direction
+            the sprite is getting knocked back in
     """
-    def __init__(self, speed, fps, image_path, spawn_pos=None):
+    def __init__(self, speed, fps, image_path, spawn_pos=None, max_health=1,
+                 invincibility_time=constants.DEFAULT_INVINCIBILITY,
+                 knockback_time=constants.DEFAULT_KNOCKBACK_TIME,
+                 knockback_dist=constants.DEFAULT_KNOCKBACK_DIST):
         """
         Initializes the character by setting surf and rect, and setting the
         animation images.
@@ -247,6 +263,7 @@ class AttackingSprite(MovingSprite):
                 to top left
             image_path: string giving the path to the character art. Defaults
                 to None, which will set a white 50x50 square
+            max_health: int representing the max health of the sprite
         """
         super().__init__(speed, fps, image_path, spawn_pos)
         for direction in ("attack_up", "attack_down", "attack_left",
@@ -260,27 +277,79 @@ class AttackingSprite(MovingSprite):
                     f'{counter}.png').convert_alpha())
                 counter += 1
         self._attacking = False
+        self._max_health = max_health
+        self._health = self._max_health
+        self._max_invincibility = invincibility_time * constants.FRAME_RATE
+        self._invincibility = self._max_invincibility
+        self._max_knockback = knockback_time * constants.FRAME_RATE
+        self._knockback = self._max_knockback
+        self._knockback_dist = knockback_dist
+        self._knockback_direction = (0, 0)
+
+    @property
+    def health(self):
+        """
+        Returns the current health of the sprite
+        """
+        return self._health
+
+    @property
+    def is_invincible(self):
+        """
+        Returns whether the sprite is currently invincible
+        """
+        return self._invincibility > 0
 
     @property
     def is_attacking(self):
+        """
+        Returns whether the sprite is currently attacking
+        """
         return self._attacking
 
     @property
     def current_animation(self):
+        """
+        Returns the current animation type of the sprite
+        """
         if self.is_attacking:
             return f'attack_{repr(self.current_facing)}'
         return super().current_animation
 
+    def damage(self, attack_direction):
+        """
+        Damages the sprite by removing 1 from its health
+        """
+        self._health -= 1
+        self._invincibility = self._max_invincibility
+        dist = (attack_direction[0]**2 + attack_direction[1]**2) ** 0.5
+        self._knockback_direction = (attack_direction[0] / dist,
+                                     attack_direction[1] / dist)
+        self._knockback = self._max_knockback
+
     def attack(self):
+        """
+        Initiates an attack
+        """
         self._attacking = True
         self._animation_frame = 0
 
     def update(self, direction):
+        """
+        Updates the state of the sprite including animation and movement
+        """
         super().update(direction)
         if self._attacking and self._animation_frame == len(
                     self._animations[self.current_animation]) * int(
                     self._frame_length):
             self._attacking = False
+        if self._invincibility > 0:
+            self._invincibility -= 1
+        if self._knockback > 0:
+            step = self._knockback_dist/self._max_knockback
+            self.move((self._knockback_direction[0] * step,
+                       self._knockback_direction[1] * step))
+            self._knockback -= 1
 
 
 class Player(AttackingSprite):
@@ -292,10 +361,11 @@ class Player(AttackingSprite):
         Initializes the player
         """
         super().__init__(constants.PLAYER_SPEED, constants.PLAYER_FPS,
-                         'player', None)
+                         'player', None, constants.PLAYER_HEALTH,
+                         constants.PLAYER_INVINCIBILITY)
 
 
-class Demon(MovingSprite):
+class Demon(AttackingSprite):
     """
     A sprite for all the enemies
     """
@@ -308,7 +378,8 @@ class Demon(MovingSprite):
                 to top left
         """
         super().__init__(constants.DEMON_SPEED, constants.DEMON_FPS,
-                         'demon', spawn_pos)
+                         'demon', spawn_pos, constants.DEMON_HEALTH,
+                         constants.DEMON_INVINCIBILITY)
 
 
 class Obstacle(GameSprite):

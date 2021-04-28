@@ -39,6 +39,11 @@ def main():
         player.update()
         demons.update()
         all_sprites.update()
+        game.update()
+
+        if not game.player.alive():
+            running = False
+
         view.draw()
         clock.tick(constants.FRAME_RATE)
 
