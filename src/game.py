@@ -37,3 +37,15 @@ class Game:
                                                OBSTACLE_MIN_SPAWN_DIST)))
         self.obstacles.add(obs)
         self.all_sprites.add(obs)
+
+    def update(self):
+        collisions = pygame.sprite.spritecollide(self.player, self.demons, False)
+        if not self.player.is_attacking and not self.player.is_invincible:
+            for demon in collisions:
+                self.player.damage(demon.current_direction)
+
+        for demon in self.demons:
+            if demon.health <= 0:
+                demon.kill()
+        if self.player.health <= 0:
+            self.player.kill()
