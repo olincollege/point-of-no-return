@@ -15,7 +15,7 @@ def new_event():
     return event_num
 
 
-def get_animation_info(path, add_still=False):
+def get_animation_info(path):
     """
     Compiles all animation information in a given folder
 
