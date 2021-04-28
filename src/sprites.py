@@ -49,23 +49,26 @@ class GameSprite(Sprite):
 
         Args:
             fps: a float, how many animation frames to do each second
+            image_path: string giving the path to the character art
             spawn_pos: tuple of 2 ints, where to spawn this character, defaults
                 to top left
-            image_path: string giving the path to the character art
         """
         super().__init__()
         self._frame_length = constants.FRAME_RATE / fps
+        # Creates animations dictionary and a key for the still images
         self._animations = {'stills': []}
         counter = 0
+        # Adds base images to the animations dictionary
         while(os.access(f'../media/images/{image_path}/{counter}.png',
                         os.F_OK)):
             self._animations['stills'].append(pygame.image.load(
                 f'../media/images/{image_path}/{counter}.png')
                                               .convert_alpha())
             counter += 1
+        # Sets current character image to the first still
         self.surf = self._animations['stills'][0]
         self._animation_frame = 0
-
+        # Default spawn position is the center of the screen
         if spawn_pos is None:
             self.rect = self.surf.get_rect(center=(constants.SCREEN_WIDTH/2,
                                                    constants.SCREEN_HEIGHT/2))
@@ -74,6 +77,9 @@ class GameSprite(Sprite):
 
     @property
     def current_animation(self):
+        """
+        Returns the current animation type for the character
+        """
         return 'stills'
 
     def update(self):
@@ -84,8 +90,9 @@ class GameSprite(Sprite):
         self._animation_frame += 1
         self._animation_frame %= len(self._animations[self.current_animation])\
             * self._frame_length
-        self.surf = self._animations[self.current_animation]\
-            [int(self._animation_frame // self._frame_length)]
+        self.surf = \
+            self._animations[self.current_animation][int(self._animation_frame
+                                                         // self._frame_length)]
 
     def move(self, delta_pos):
         """
@@ -122,6 +129,8 @@ class MovingSprite(GameSprite):
             image_path: string giving the path to the character art
         """
         super().__init__(fps, image_path, spawn_pos)
+        # Add the images for the other animation types to the animations
+        # dictionary
         for direction in ("up", "down", "left", "right"):
             self._animations[direction] = []
             counter = 0
@@ -131,6 +140,8 @@ class MovingSprite(GameSprite):
                     f'../media/images/{image_path}/{direction}/' +
                     f'{counter}.png').convert_alpha())
                 counter += 1
+            # Set the still images for the sprite to the first frame in each
+            # moving direction
             self._animations[f'still_{direction}'] =\
                 [self._animations[direction][0]]
         self._speed = speed
@@ -139,6 +150,9 @@ class MovingSprite(GameSprite):
 
     @property
     def speed(self):
+        """
+        Returns the speed in pixels per second
+        """
         return self._speed
 
     @property
@@ -150,6 +164,9 @@ class MovingSprite(GameSprite):
 
     @property
     def current_direction(self):
+        """
+        Returns the last direction the sprite faced as a tuple from -1 to 1
+        """
         return self._current_direction
 
     @property
@@ -162,10 +179,16 @@ class MovingSprite(GameSprite):
 
     @property
     def current_facing(self):
+        """
+        Returns the current Direction facing of the sprite
+        """
         return self._current_facing
 
     @property
     def current_animation(self):
+        """
+        Returns the current animation type of the sprite
+        """
         if self._current_direction == (0, 0):
             return f'still_{repr(self.current_facing)}'
         angle = self.current_angle
@@ -181,8 +204,7 @@ class MovingSprite(GameSprite):
 
     def update(self, direction):
         """
-        Updates the character's current position and does any other necessary
-        changes to the character's state.
+        Updates the character's current position and animation.
 
         Args:
             direction: tuple of 2 floats from -1 to 1, x/y coordinates of
