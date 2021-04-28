@@ -39,7 +39,9 @@ class Game:
         self.all_sprites.add(obs)
 
     def update(self):
-        collisions = pygame.sprite.spritecollide(self.player, self.demons, False)
+        collisions = \
+            pygame.sprite.spritecollide(self.player, self.demons, False,
+                                        pygame.sprite.collide_rect_ratio(0.7))
         if not self.player.is_attacking and not self.player.is_invincible:
             for demon in collisions:
                 self.player.damage(demon.current_direction)
