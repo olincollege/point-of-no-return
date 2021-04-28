@@ -2,6 +2,7 @@
 Sprites in **INSERT TITLE**
 """
 
+from datetime import datetime
 from enum import Enum
 import os
 import pygame
@@ -81,11 +82,14 @@ class GameSprite(Sprite):
         Updates the character's current animation and does any other necessary
         changes to the character's state.
         """
-        self._animation_frame += 1
-        self._animation_frame %= len(self._animations[self.current_animation])\
-            * self._frame_length
+        if self._animation_frame >= len(self._animations[
+                                           self.current_animation])\
+                * self._frame_length:
+            self._animation_frame = 0
+        print(f"[{datetime.now()}] Animation frame: {self._animation_frame}. Frame Length: {self._frame_length}")
         self.surf = self._animations[self.current_animation]\
             [int(self._animation_frame // self._frame_length)]
+        self._animation_frame += 1
 
     def move(self, delta_pos):
         """
@@ -255,7 +259,7 @@ class AttackingSprite(MovingSprite):
         super().update(direction)
         if self._attacking and self._animation_frame == len(
                     self._animations[self.current_animation]) * int(
-                    self._frame_length) - 1:
+                    self._frame_length):
             self._attacking = False
 
 
