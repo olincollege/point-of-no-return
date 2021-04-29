@@ -359,7 +359,6 @@ class AttackingSprite(MovingSprite):
             step = self._knockback_dist/self._max_knockback / self.frame_speed
             direction = (direction[0] + self._knockback_direction[0] * step,
                          direction[1] + self._knockback_direction[1] * step)
-            self._knockback -= 1
         super().update(direction)
         if self._attacking and self._animation_frame == len(
                     self.current_animation['animations']) * int(
@@ -367,6 +366,8 @@ class AttackingSprite(MovingSprite):
             self._attacking = False
         if self._invincibility > 0:
             self._invincibility -= 1
+        if self._knockback > 0:
+            self._knockback -= 1
 
 
 class Player(AttackingSprite):
