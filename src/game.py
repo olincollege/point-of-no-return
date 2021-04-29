@@ -48,9 +48,6 @@ class Game:
                 demon.damage(self.player.current_facing.value)
             elif not self.player.is_invincible:
                 self.player.damage(demon.current_direction)
-        if not self.player.is_attacking and not self.player.is_invincible:
-            for demon in collisions:
-                self.player.damage(demon.current_direction)
 
         for demon in self.demons:
             if demon.health <= 0:
