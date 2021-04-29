@@ -67,6 +67,7 @@ class GameSprite(Sprite):
                                                    constants.SCREEN_HEIGHT/2))
         else:
             self.rect = self.surf.get_rect(center=spawn_pos)
+        self.mask = pygame.mask.from_surface(self.surf)
 
     @property
     def current_animation(self):
@@ -83,8 +84,11 @@ class GameSprite(Sprite):
         if self._animation_frame >= len(self.current_animation['animations'])\
                 * self.current_animation['frame_length']:
             self._animation_frame = 0
+        last_surf = self.surf
         self.surf = self.current_animation['animations'][int(
             self._animation_frame // self.current_animation['frame_length'])]
+        if last_surf != self.surf:
+            self.mask = pygame.mask.from_surface(self.surf)
         self._animation_frame += 1
 
     def move(self, delta_pos):

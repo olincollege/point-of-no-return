@@ -6,6 +6,7 @@ import pygame
 import random
 import constants
 import sprites
+import utils
 
 
 class Game:
@@ -39,7 +40,14 @@ class Game:
         self.all_sprites.add(obs)
 
     def update(self):
-        collisions = pygame.sprite.spritecollide(self.player, self.demons, False)
+        collisions = pygame.sprite.\
+            spritecollide(self.player, self.demons, False,
+                          collided=pygame.sprite.collide_mask)
+        for demon in collisions:
+            if utils.touching_sword(self.player, demon):
+                demon.damage(self.player.current_facing.value)
+            elif not self.player.is_invincible:
+                self.player.damage(demon.current_direction)
         if not self.player.is_attacking and not self.player.is_invincible:
             for demon in collisions:
                 self.player.damage(demon.current_direction)

@@ -44,3 +44,43 @@ def get_animation_info(path):
             f'{path}/{counter}.png').convert_alpha())
         counter += 1
     return animation_info
+
+
+def is_sword(color):
+    """
+    Finds if a certain pixel is part of the character's sword. This is defined
+    as a grayscale pixel (difference no larger than 5%) with an average value
+    between 100 and 225.
+
+    Args:
+        color: a tuple of rgba values
+
+    Returns:
+        a boolean, True iff the color could represent a pixel on the sword
+    """
+    r = color[0]
+    g = color[1]
+    b = color[2]
+    av = (r + g + b) / 3
+    max_diff = av * 0.05
+    if abs(r - g) > max_diff or abs(r - b) > max_diff or abs(g - b) > max_diff:
+        return False
+    return 100 < av < 225
+
+
+def touching_sword(player, demon):
+    """
+    Determines whether the demon has been hit by the player's sword
+
+    Args:
+        player: the Player that is attacking
+        demon: the Demon to check for if it has been hit
+
+    Return a boolean, True iff the demon has been hit by the player's sword
+    """
+    if not player.is_attacking:
+        return False
+    collide = pygame.sprite.collide_mask(player, demon)
+    if collide is None:
+        return False
+    return is_sword(player.surf.get_at(collide))
