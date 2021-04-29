@@ -4,8 +4,6 @@ Sprites in **INSERT TITLE**
 
 from datetime import datetime
 from enum import Enum
-import json
-import os
 import pygame
 from pygame.sprite import Sprite
 from math import atan2, pi
@@ -124,7 +122,7 @@ class GameSprite(Sprite):
         Args:
             delta_pos: tuple of 2 ints, x/y number of pixels to move
         """
-        self.rect.move_ip(delta_pos[0], delta_pos[1])
+        self.rect.move_ip(int(delta_pos[0]), int(delta_pos[1]))
 
 
 class MovingSprite(GameSprite):
@@ -327,6 +325,8 @@ class AttackingSprite(MovingSprite):
         """
         Returns the current animation type of the sprite
         """
+        if self._knockback > 0:
+            return self._animations[f'still_{repr(self.current_facing)}']
         if self.is_attacking:
             return self._animations[f'attack_{repr(self.current_facing)}']
         return super().current_animation
@@ -355,6 +355,11 @@ class AttackingSprite(MovingSprite):
         """
         Updates the state of the sprite including animation and movement
         """
+        if self._knockback > 0:
+            step = self._knockback_dist/self._max_knockback / self.frame_speed
+            direction = (direction[0] + self._knockback_direction[0] * step,
+                         direction[1] + self._knockback_direction[1] * step)
+            self._knockback -= 1
         super().update(direction)
         if self._attacking and self._animation_frame == len(
                     self.current_animation['animations']) * int(
@@ -362,11 +367,6 @@ class AttackingSprite(MovingSprite):
             self._attacking = False
         if self._invincibility > 0:
             self._invincibility -= 1
-        if self._knockback > 0:
-            step = self._knockback_dist/self._max_knockback
-            self.move((self._knockback_direction[0] * step,
-                       self._knockback_direction[1] * step))
-            self._knockback -= 1
 
 
 class Player(AttackingSprite):
@@ -380,6 +380,15 @@ class Player(AttackingSprite):
         super().__init__(constants.PLAYER_SPEED, constants.PLAYER_FPS,
                          'player', None, constants.PLAYER_HEALTH,
                          constants.PLAYER_INVINCIBILITY)
+
+    def move(self, delta_pos):
+        if self.rect.left + delta_pos[0] < 0\
+          or self.rect.right + delta_pos[0] > constants.SCREEN_WIDTH:
+            delta_pos = (0, delta_pos[1])
+        if self.rect.top + delta_pos[1] < 0\
+          or self.rect.bottom + delta_pos[1] > constants.SCREEN_HEIGHT:
+            delta_pos = (delta_pos[0], 0)
+        super().move(delta_pos)
 
 
 class Demon(AttackingSprite):
