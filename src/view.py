@@ -60,7 +60,11 @@ class GraphicView(View):
         for entity in self._game.all_sprites:
             self._screen.blit(entity.surf, entity.rect)
 
-        player_pos = self._game.player.rect.center
+        player_pos = self._game.player.rect.topleft
+        pos_offset = self._game.player.last_animation['positions']\
+            [self._game.player.last_frame]
+        player_pos = (player_pos[0] + pos_offset[0],
+                      player_pos[1] + pos_offset[1])
         light = pygame.Surface(constants.SCREEN_SIZE, pygame.SRCALPHA)
         light.fill((0, 0, 0, 0))
         pygame.draw.circle(light, (0, 0, 0, constants.LIGHT_DIFF), player_pos,

@@ -18,10 +18,10 @@ class Direction(Enum):
     An enum that represents the four directions. Evaluated to a tuple of two
     ints, which is the direction on a -1 to 1 scale in x-y coordinates
     """
-    UP = (-1, 0)
-    DOWN = (1, 0)
-    LEFT = (0, -1)
-    RIGHT = (0, 1)
+    UP = (0, -1)
+    DOWN = (0, 1)
+    LEFT = (-1, 0)
+    RIGHT = (1, 0)
 
     def __repr__(self):
         if self == Direction.UP:
@@ -42,6 +42,8 @@ class GameSprite(Sprite):
         _animations: a dictionary with animation sequence names as keys and
             lists of images representing each sequence as values
         _animation_frame: an int, the current frame of the animation
+        _last_animation: a tuple, first element is the animation dict from
+            _animations, second element is the frame of that animation
     """
     def __init__(self, fps, image_path, spawn_pos=None):
         """
@@ -68,6 +70,7 @@ class GameSprite(Sprite):
         else:
             self.rect = self.surf.get_rect(center=spawn_pos)
         self.mask = pygame.mask.from_surface(self.surf)
+        self._last_animation = (self._animations["stills"], 0)
 
     @property
     def current_animation(self):
@@ -75,6 +78,20 @@ class GameSprite(Sprite):
         Returns the current animation type for the character
         """
         return self._animations['stills']
+
+    @property
+    def last_animation(self):
+        """
+        Returns a dictionary of all the information for the last animation
+        """
+        return self._last_animation[0]
+
+    @property
+    def last_frame(self):
+        """
+        Returns the frame number the last animation was on
+        """
+        return self._last_animation[1]
 
     def update(self):
         """
@@ -84,12 +101,21 @@ class GameSprite(Sprite):
         if self._animation_frame >= len(self.current_animation['animations'])\
                 * self.current_animation['frame_length']:
             self._animation_frame = 0
+
         last_surf = self.surf
-        self.surf = self.current_animation['animations'][int(
-            self._animation_frame // self.current_animation['frame_length'])]
+        frame = int(self._animation_frame
+                    // self.current_animation['frame_length'])
+        self.surf = self.current_animation['animations'][frame]
         if last_surf != self.surf:
             self.mask = pygame.mask.from_surface(self.surf)
+
+        last_pos = self._last_animation[0]['positions'][self._last_animation[1]]
+        current_pos = self.current_animation['positions'][frame]
+        delta = (last_pos[0] - current_pos[0], last_pos[1] - current_pos[1])
+        self.move(delta)
+
         self._animation_frame += 1
+        self._last_animation = (self.current_animation, frame)
 
     def move(self, delta_pos):
         """
@@ -309,6 +335,8 @@ class AttackingSprite(MovingSprite):
         """
         Damages the sprite by removing 1 from its health
         """
+        if self.is_invincible:
+            return
         self._health -= 1
         self._invincibility = self._max_invincibility
         dist = (attack_direction[0]**2 + attack_direction[1]**2) ** 0.5

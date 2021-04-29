@@ -46,7 +46,7 @@ class Game:
         for demon in collisions:
             if utils.touching_sword(self.player, demon):
                 demon.damage(self.player.current_facing.value)
-            elif not self.player.is_invincible:
+            else:
                 self.player.damage(demon.current_direction)
 
         for demon in self.demons:
