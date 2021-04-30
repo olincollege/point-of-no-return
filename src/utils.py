@@ -97,4 +97,5 @@ def spritecollide(sprite, group):
     Returns a list of sprites from the group that are colliding with sprite
     """
     return pygame.sprite.spritecollide(sprite, group, False,
-                                       collided=pygame.sprite.collide_mask)
+                                       collided=lambda s1, s2: pygame.sprite
+                                       .collide_mask(s1, s2) is not None)
