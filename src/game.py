@@ -61,7 +61,10 @@ class Game:
             if utils.touching_sword(self.player, demon):
                 demon.damage(self.player.current_facing.value)
             else:
-                self.player.damage(demon.current_direction)
+                if demon.current_direction == (0, 0):
+                    self.player.damage(demon.current_facing.value)
+                else:
+                    self.player.damage(demon.current_direction)
 
         for demon in self.demons:
             if demon.health <= 0:

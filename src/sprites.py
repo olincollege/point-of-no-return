@@ -400,7 +400,7 @@ class Player(AttackingSprite):
           or self.rect.right + delta_pos[0] > constants.SCREEN_WIDTH:
             delta_pos = (0, delta_pos[1])
         if self.rect.top + delta_pos[1] < 0\
-          or self.rect.bottom + delta_pos[1] > constants.SCREEN_HEIGHT:
+           or self.rect.bottom + delta_pos[1] > constants.SCREEN_HEIGHT:
             delta_pos = (delta_pos[0], 0)
         super().move(delta_pos)
 

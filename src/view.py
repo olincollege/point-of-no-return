@@ -76,4 +76,11 @@ class GraphicView(View):
         dark.blit(light, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
         self._screen.blit(dark, (0, 0))
 
+        pygame.draw.rect(self._screen, constants.HEALTH_BAR_COLOR,
+                         (constants.HEALTH_BAR_POS[0],
+                          constants.HEALTH_BAR_POS[1],
+                          constants.HEALTH_BAR_UNIT_WIDTH *
+                          self._game.player.health,
+                          constants.HEALTH_BAR_HEIGHT))
+
         pygame.display.flip()
