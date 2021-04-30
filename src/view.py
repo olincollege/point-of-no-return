@@ -65,7 +65,7 @@ class GraphicView(View):
                         % 2 == 0:
                     entity.surf.set_alpha(255)
                 else:
-                    entity.surf.set_alpha(180)
+                    entity.surf.set_alpha(constants.INVINCIBILITY_ALPHA)
             elif entity.surf.get_alpha() < 255:
                 entity.surf.set_alpha(255)
             self._screen.blit(entity.surf, entity.rect)
