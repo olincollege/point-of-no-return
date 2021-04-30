@@ -56,8 +56,6 @@ class GraphicView(View):
         """
         Displays the current game state
         """
-        for entity in self._game.all_sprites:
-            self._game.all_sprites.change_layer(entity, entity.layer)
         self._screen.fill((255, 0, 0))
         for entity in self._game.all_sprites:
             self._screen.blit(entity.surf, entity.rect)

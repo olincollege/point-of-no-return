@@ -18,8 +18,6 @@ def main():
 
     ADD_DEMON = new_event()
     pygame.time.set_timer(ADD_DEMON, constants.DEMON_SPAWN_TIME)
-    ADD_OBSTACLE = new_event()
-    pygame.time.set_timer(ADD_OBSTACLE, constants.OBSTACLE_SPAWN_TIME)
 
     clock = pygame.time.Clock()
     running = True
@@ -33,8 +31,6 @@ def main():
                 running = False
             elif event.type == ADD_DEMON:
                 game.create_new_demon()
-            elif event.type == ADD_OBSTACLE:
-                game.create_new_obstacle()
 
         player.update()
         demons.update()

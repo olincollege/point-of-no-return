@@ -23,6 +23,7 @@ class Game:
         self.obstacles = pygame.sprite.LayeredUpdates()
         self.all_sprites = pygame.sprite.LayeredUpdates()
         self.all_sprites.add(self.player)
+        self.create_new_obstacle(True)
 
     def create_new_demon(self):
         min_x = constants.SCREEN_WIDTH + constants.DEMON_MIN_SPAWN_DIST
@@ -43,12 +44,14 @@ class Game:
         self.demons.add(demon)
         self.all_sprites.add(demon)
 
-    def create_new_obstacle(self):
+    def create_new_obstacle(self, is_top):
+        y_val = -random.randint(constants.OBSTACLE_MIN_SPAWN_DIST,
+                                constants.OBSTACLE_MAX_SPAWN_DIST)
+        if not is_top:
+            y_val = constants.SCREEN_HEIGHT - y_val
+
         obs = sprites.Obstacle(self, (random.randint(0, constants.SCREEN_WIDTH),
-                                      random.randint(-constants.
-                                                     OBSTACLE_MAX_SPAWN_DIST,
-                                                     -constants.
-                                                     OBSTACLE_MIN_SPAWN_DIST)))
+                                      y_val))
         self.obstacles.add(obs)
         self.all_sprites.add(obs)
 
@@ -63,5 +66,20 @@ class Game:
         for demon in self.demons:
             if demon.health <= 0:
                 demon.kill()
+
         if self.player.health <= 0:
             self.player.kill()
+
+        for group in (self.all_sprites, self.demons, self.obstacles):
+            for entity in group:
+                group.change_layer(entity, entity.layer)
+
+        if self.player.current_direction[1] < 0\
+                and self.player.layer - constants.OBSTACLE_SPAWN_TRIGGER_DIST\
+                < self.obstacles.get_bottom_layer():
+            self.create_new_obstacle(True)
+        elif self.player.current_direction[1] > 0\
+                and self.player.layer + constants.OBSTACLE_SPAWN_TRIGGER_DIST\
+                > self.obstacles.get_top_layer():
+            self.create_new_obstacle(False)
+
