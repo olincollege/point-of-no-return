@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 import pygame
 import constants
+from sprites import AttackingSprite
 
 
 class View(ABC):
@@ -57,9 +58,19 @@ class GraphicView(View):
         Displays the current game state
         """
         self._screen.fill((255, 0, 0))
+        # Display all entities
         for entity in self._game.all_sprites:
+            if isinstance(entity, AttackingSprite) and entity.is_invincible:
+                if (entity.invincibility_time // constants.TRANSPARENT_TIME)\
+                        % 2 == 0:
+                    entity.surf.set_alpha(255)
+                else:
+                    entity.surf.set_alpha(180)
+            elif entity.surf.get_alpha() < 255:
+                entity.surf.set_alpha(255)
             self._screen.blit(entity.surf, entity.rect)
 
+        # Lighting circle around player
         player_pos = self._game.player.rect.topleft
         pos_offset = self._game.player.last_animation['positions']\
             [self._game.player.last_frame]
@@ -76,6 +87,7 @@ class GraphicView(View):
         dark.blit(light, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
         self._screen.blit(dark, (0, 0))
 
+        # Health bar
         pygame.draw.rect(self._screen, constants.HEALTH_BAR_COLOR,
                          (constants.HEALTH_BAR_POS[0],
                           constants.HEALTH_BAR_POS[1],

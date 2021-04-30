@@ -303,9 +303,9 @@ class AttackingSprite(MovingSprite):
         self._max_health = max_health
         self._health = self._max_health
         self._max_invincibility = invincibility_time * constants.FRAME_RATE
-        self._invincibility = self._max_invincibility
+        self._invincibility = 0
         self._max_knockback = knockback_time * constants.FRAME_RATE
-        self._knockback = self._max_knockback
+        self._knockback = 0
         self._knockback_dist = knockback_dist
         self._knockback_direction = (0, 0)
 
@@ -322,6 +322,13 @@ class AttackingSprite(MovingSprite):
         Returns whether the sprite is currently invincible
         """
         return self._invincibility > 0
+
+    @property
+    def invincibility_time(self):
+        """
+        Returns how much longer the sprite is invincible for in seconds
+        """
+        return self._invincibility / constants.FRAME_RATE
 
     @property
     def is_attacking(self):
