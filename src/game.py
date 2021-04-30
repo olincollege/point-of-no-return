@@ -2,11 +2,11 @@
 **INSERT TITLE** Game
 """
 
+import math
 import pygame
 import random
 import constants
 import sprites
-from sprites import Direction
 import utils
 
 
@@ -25,25 +25,20 @@ class Game:
         self.all_sprites.add(self.player)
 
     def create_new_demon(self):
-        spawn_direction = random.choice((Direction.UP, Direction.DOWN,
-                                         Direction.LEFT, Direction.RIGHT))
-        spawn_dist = random.randint(constants.DEMON_MIN_SPAWN_DIST,
-                                    constants.DEMON_MAX_SPAWN_DIST)
-        spawn_value = random.randint(0, constants.SCREEN_WIDTH if
-                                     spawn_direction.value[0] == 0 else
-                                     constants.SCREEN_HEIGHT)
-        spawn_pos = None
-        if spawn_direction == Direction.UP:
-            spawn_pos = (spawn_value, -spawn_dist)
-        elif spawn_direction == Direction.DOWN:
-            spawn_pos = (spawn_value, constants.SCREEN_HEIGHT + spawn_dist)
-        elif spawn_direction == Direction.LEFT:
-            spawn_pos = (-spawn_dist, spawn_value)
-        elif spawn_direction == Direction.RIGHT:
-            spawn_pos = (constants.SCREEN_WIDTH + spawn_dist, spawn_value)
-        else:
-            spawn_pos = (50, 50)
+        min_x = constants.SCREEN_WIDTH + constants.DEMON_MIN_SPAWN_DIST
+        min_y = constants.SCREEN_HEIGHT + constants.DEMON_MIN_SPAWN_DIST
+        dist = constants.DEMON_MAX_SPAWN_DIST - constants.DEMON_MIN_SPAWN_DIST
 
+        theta = random.uniform(-math.pi, math.pi)
+        max_theta = math.atan(min_y / min_x)
+        is_x = abs(theta) < max_theta or abs(theta) > math.pi - max_theta
+        trig = abs(math.cos(theta) if is_x else math.sin(theta))
+
+        min_rad = (min_x if is_x else min_y) / 2.0 / trig
+        rad = random.uniform(min_rad, min_rad + dist / trig)
+        spawn_pos = (rad * math.cos(theta) + constants.SCREEN_WIDTH / 2,
+                     rad * math.sin(theta) + constants.SCREEN_HEIGHT / 2)
+        
         demon = sprites.Demon(spawn_pos=spawn_pos)
         self.demons.add(demon)
         self.all_sprites.add(demon)
