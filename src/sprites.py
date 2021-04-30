@@ -69,6 +69,14 @@ class GameSprite(Sprite):
             self.rect = self.surf.get_rect(center=spawn_pos)
         self.mask = pygame.mask.from_surface(self.surf)
         self._last_animation = (self._animations["stills"], 0)
+        self._layer = self.rect.bottom
+
+    @property
+    def layer(self):
+        """
+        Returns the display layer for the sprite
+        """
+        return self._layer
 
     @property
     def current_animation(self):
@@ -123,6 +131,7 @@ class GameSprite(Sprite):
             delta_pos: tuple of 2 ints, x/y number of pixels to move
         """
         self.rect.move_ip(int(delta_pos[0]), int(delta_pos[1]))
+        self._layer = self.rect.bottom
 
 
 class MovingSprite(GameSprite):
@@ -234,15 +243,6 @@ class MovingSprite(GameSprite):
         super().update()
         self.move((direction[0] * self.frame_speed,
                    direction[1] * self.frame_speed))
-
-    def move(self, delta_pos):
-        """
-        Moves the character's current position a certain number of pixels
-
-        Args:
-            delta_pos: tuple of 2 ints, x/y number of pixels to move
-        """
-        self.rect.move_ip(delta_pos[0], delta_pos[1])
 
 
 class AttackingSprite(MovingSprite):

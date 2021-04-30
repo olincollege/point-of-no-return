@@ -19,9 +19,9 @@ class Game:
         Initializes this instance of the game
         """
         self.player = sprites.Player()
-        self.demons = pygame.sprite.Group()
-        self.obstacles = pygame.sprite.Group()
-        self.all_sprites = pygame.sprite.Group()
+        self.demons = pygame.sprite.LayeredUpdates()
+        self.obstacles = pygame.sprite.LayeredUpdates()
+        self.all_sprites = pygame.sprite.LayeredUpdates()
         self.all_sprites.add(self.player)
 
     def create_new_demon(self):
@@ -58,6 +58,9 @@ class Game:
         self.all_sprites.add(obs)
 
     def update(self):
+        for entity in self.all_sprites:
+            self.all_sprites.change_layer(entity, entity.layer)
+
         collisions = pygame.sprite.\
             spritecollide(self.player, self.demons, False,
                           collided=pygame.sprite.collide_mask)
