@@ -6,6 +6,7 @@ import pygame
 import random
 import constants
 import sprites
+from sprites import Direction
 import utils
 
 
@@ -24,9 +25,26 @@ class Game:
         self.all_sprites.add(self.player)
 
     def create_new_demon(self):
-        demon = sprites.Demon((random.randint(0, constants.SCREEN_WIDTH),
-                               random.randint(-constants.DEMON_MAX_SPAWN_DIST,
-                                              -constants.DEMON_MIN_SPAWN_DIST)))
+        spawn_direction = random.choice((Direction.UP, Direction.DOWN,
+                                         Direction.LEFT, Direction.RIGHT))
+        spawn_dist = random.randint(constants.DEMON_MIN_SPAWN_DIST,
+                                    constants.DEMON_MAX_SPAWN_DIST)
+        spawn_value = random.randint(0, constants.SCREEN_WIDTH if
+                                     spawn_direction.value[0] == 0 else
+                                     constants.SCREEN_HEIGHT)
+        spawn_pos = None
+        if spawn_direction == Direction.UP:
+            spawn_pos = (spawn_value, -spawn_dist)
+        elif spawn_direction == Direction.DOWN:
+            spawn_pos = (spawn_value, constants.SCREEN_HEIGHT + spawn_dist)
+        elif spawn_direction == Direction.LEFT:
+            spawn_pos = (-spawn_dist, spawn_value)
+        elif spawn_direction == Direction.RIGHT:
+            spawn_pos = (constants.SCREEN_WIDTH + spawn_dist, spawn_value)
+        else:
+            spawn_pos = (50, 50)
+
+        demon = sprites.Demon(spawn_pos=spawn_pos)
         self.demons.add(demon)
         self.all_sprites.add(demon)
 
