@@ -18,7 +18,7 @@ class Game:
         """
         Initializes this instance of the game
         """
-        self.player = sprites.Player()
+        self.player = sprites.Player(self)
         self.demons = pygame.sprite.LayeredUpdates()
         self.obstacles = pygame.sprite.LayeredUpdates()
         self.all_sprites = pygame.sprite.LayeredUpdates()
@@ -39,26 +39,21 @@ class Game:
         spawn_pos = (rad * math.cos(theta) + constants.SCREEN_WIDTH / 2,
                      rad * math.sin(theta) + constants.SCREEN_HEIGHT / 2)
         
-        demon = sprites.Demon(spawn_pos=spawn_pos)
+        demon = sprites.Demon(self, spawn_pos=spawn_pos)
         self.demons.add(demon)
         self.all_sprites.add(demon)
 
     def create_new_obstacle(self):
-        obs = sprites.Obstacle((random.randint(0, constants.SCREEN_WIDTH),
-                                random.randint(-constants.
-                                               OBSTACLE_MAX_SPAWN_DIST,
-                                               -constants.
-                                               OBSTACLE_MIN_SPAWN_DIST)))
+        obs = sprites.Obstacle(self, (random.randint(0, constants.SCREEN_WIDTH),
+                                      random.randint(-constants.
+                                                     OBSTACLE_MAX_SPAWN_DIST,
+                                                     -constants.
+                                                     OBSTACLE_MIN_SPAWN_DIST)))
         self.obstacles.add(obs)
         self.all_sprites.add(obs)
 
     def update(self):
-        for entity in self.all_sprites:
-            self.all_sprites.change_layer(entity, entity.layer)
-
-        collisions = pygame.sprite.\
-            spritecollide(self.player, self.demons, False,
-                          collided=pygame.sprite.collide_mask)
+        collisions = utils.spritecollide(self.player, self.demons)
         for demon in collisions:
             if utils.touching_sword(self.player, demon):
                 demon.damage(self.player.current_facing.value)

@@ -78,13 +78,6 @@ class PlayerController(Controller):
                                              self.sprite.rect.top <= 0):
                 direction[1] = 0
 
-            collisions = pygame.sprite.spritecollide(self.sprite,
-                                                     self.game.obstacles, False)
-            for obstacle in collisions:
-                threshold = self.sprite.rect.height * .25
-                if self.sprite.rect.bottom <= obstacle.rect.bottom + threshold:
-                    direction[1] = 0
-
             self.sprite.update((direction[0], direction[1]))
 
 

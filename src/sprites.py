@@ -40,16 +40,17 @@ class GameSprite(Sprite):
         _animations: a dictionary with animation sequence names as keys and
             lists of images representing each sequence as values
         _animation_frame: an int, the current frame of the animation
+        _game: a Game that contains all the sprites
         _last_animation: a tuple, first element is the animation dict from
             _animations, second element is the frame of that animation
     """
-    def __init__(self, fps, image_path, spawn_pos=None):
+    def __init__(self, game, image_path, spawn_pos=None):
         """
         Initializes the character by setting surf and rect, and setting the
         given image.
 
         Args:
-            fps: a float, how many animation frames to do each second
+            game: a Game that holds all the sprites
             image_path: string giving the path to the character art
             spawn_pos: tuple of 2 ints, where to spawn this character, defaults
                 to top left
@@ -70,6 +71,7 @@ class GameSprite(Sprite):
         self.mask = pygame.mask.from_surface(self.surf)
         self._last_animation = (self._animations["stills"], 0)
         self._layer = self.rect.bottom
+        self._game = game
 
     @property
     def layer(self):
@@ -146,19 +148,18 @@ class MovingSprite(GameSprite):
         _current_facing: a Direction (Up, Down, Left, Right), which way this
             sprite is currently facing
     """
-    def __init__(self, speed, fps, image_path, spawn_pos=None):
+    def __init__(self, game, speed, image_path, spawn_pos=None):
         """
         Initializes the character by setting surf and rect, and setting the
         animation frame images.
 
         Args:
             speed: int, the max character speed in pixels/second
-            fps: a float, how many animation frames to do each second
             spawn_pos: tuple of 2 ints, where to spawn this character, defaults
                 to top left
             image_path: string giving the path to the character art
         """
-        super().__init__(fps, image_path, spawn_pos)
+        super().__init__(game, image_path, spawn_pos)
         # Add the images for the other animation types to the animations
         # dictionary
         path = f'{constants.IMAGE_FOLDER}/{image_path}'
@@ -239,10 +240,18 @@ class MovingSprite(GameSprite):
             direction: tuple of 2 floats from -1 to 1, x/y coordinates of
                 target speed as percentage of max
         """
-        self._current_direction = direction
         super().update()
+        collisions = utils.spritecollide(self, self._game.obstacles)
+        for obstacle in collisions:
+            threshold = self.rect.height * .25
+            if (obstacle.rect.bottom <= self.rect.bottom <= obstacle.rect.bottom
+                    + threshold and direction[1] < 0)\
+                    or (obstacle.rect.bottom - threshold <= self.rect.bottom
+                        <= obstacle.rect.bottom and direction[1] > 0):
+                direction = (direction[0], 0)
         self.move((direction[0] * self.frame_speed,
                    direction[1] * self.frame_speed))
+        self._current_direction = direction
 
 
 class AttackingSprite(MovingSprite):
@@ -266,7 +275,7 @@ class AttackingSprite(MovingSprite):
         _knockback_direction: a tuple of two floats representing which direction
             the sprite is getting knocked back in
     """
-    def __init__(self, speed, fps, image_path, spawn_pos=None, max_health=1,
+    def __init__(self, game, speed, image_path, spawn_pos=None, max_health=1,
                  invincibility_time=constants.DEFAULT_INVINCIBILITY,
                  knockback_time=constants.DEFAULT_KNOCKBACK_TIME,
                  knockback_dist=constants.DEFAULT_KNOCKBACK_DIST):
@@ -275,6 +284,7 @@ class AttackingSprite(MovingSprite):
         animation images.
 
         Args:
+            game: a Game that contains all the sprites
             speed: int, the max character speed in pixels/second
             fps: a float, how many animation frames to do each second
             spawn_pos: tuple of 2 ints, where to spawn this character, defaults
@@ -283,7 +293,7 @@ class AttackingSprite(MovingSprite):
                 to None, which will set a white 50x50 square
             max_health: int representing the max health of the sprite
         """
-        super().__init__(speed, fps, image_path, spawn_pos)
+        super().__init__(game, speed, image_path, spawn_pos)
         path = f'{constants.IMAGE_FOLDER}/{image_path}'
         for animation in ("attack_up", "attack_down", "attack_left",
                           "attack_right"):
@@ -374,12 +384,15 @@ class Player(AttackingSprite):
     """
     A sprite for the player
     """
-    def __init__(self):
+    def __init__(self, game):
         """
         Initializes the player
+
+        Args:
+            game: a Game that contains all the sprites
         """
-        super().__init__(constants.PLAYER_SPEED, constants.PLAYER_FPS,
-                         'player', None, constants.PLAYER_HEALTH,
+        super().__init__(game, constants.PLAYER_SPEED, 'player', None,
+                         constants.PLAYER_HEALTH,
                          constants.PLAYER_INVINCIBILITY)
 
     def move(self, delta_pos):
@@ -396,29 +409,30 @@ class Demon(AttackingSprite):
     """
     A sprite for all the enemies
     """
-    def __init__(self, spawn_pos=None):
+    def __init__(self, game, spawn_pos=None):
         """
         Initializes the demon
 
         Args:
+            game: a Game that contains all the sprites
             spawn_pos: a tuple of 2 ints, where to spawn the demon, defaults
                 to top left
         """
-        super().__init__(constants.DEMON_SPEED, constants.DEMON_FPS,
-                         'demon', spawn_pos, constants.DEMON_HEALTH,
-                         constants.DEMON_INVINCIBILITY)
+        super().__init__(game, constants.DEMON_SPEED, 'demon', spawn_pos,
+                         constants.DEMON_HEALTH, constants.DEMON_INVINCIBILITY)
 
 
 class Obstacle(GameSprite):
     """
     A sprite for game obstacles
     """
-    def __init__(self, spawn_pos=None):
+    def __init__(self, game, spawn_pos=None):
         """
         Initializes the obstacle
 
         Args:
+            game: a Game that contains all the sprites
             spawn_pos: a tuple of 2 ints, where to spawn the demon, defaults
                 to top left
         """
-        super().__init__(4, 'obstacle', spawn_pos)
+        super().__init__(game, 'obstacle', spawn_pos)

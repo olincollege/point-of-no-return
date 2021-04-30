@@ -84,3 +84,17 @@ def touching_sword(player, demon):
     if collide is None:
         return False
     return is_sword(player.surf.get_at(collide))
+
+
+def spritecollide(sprite, group):
+    """
+    Runs sprite collide with our default parameters
+
+    Args:
+         sprite: the sprite to check for collisions with
+         group: the sprite group to check for collisions against
+
+    Returns a list of sprites from the group that are colliding with sprite
+    """
+    return pygame.sprite.spritecollide(sprite, group, False,
+                                       collided=pygame.sprite.collide_mask)
