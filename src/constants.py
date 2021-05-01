@@ -1,3 +1,5 @@
+from pygame import locals
+
 # Screen info
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -48,3 +50,12 @@ DEMON_MAX_SPAWN_DIST = 100
 OBSTACLE_SPAWN_TRIGGER_DIST = SCREEN_HEIGHT/2 - 100
 OBSTACLE_MIN_SPAWN_DIST = 50
 OBSTACLE_MAX_SPAWN_DIST = 200
+
+# Controls
+MOVES = {
+    'up': locals.K_w,
+    'down': locals.K_s,
+    'left': locals.K_a,
+    'right': locals.K_d,
+    'attack': locals.K_SPACE
+}

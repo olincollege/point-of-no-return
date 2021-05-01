@@ -1,14 +1,7 @@
 from abc import ABC, abstractmethod
 import pygame
-from pygame.locals import (
-    K_w,
-    K_s,
-    K_a,
-    K_d,
-    K_SPACE,
-    KEYDOWN,
-)
 import constants
+from constants import MOVES
 
 
 class Controller(ABC):
@@ -60,14 +53,16 @@ class PlayerController(Controller):
         Updates the player state
         """
         pressed_keys = pygame.key.get_pressed()
-        if pressed_keys[K_SPACE] and not self.sprite.is_attacking:
+        if pressed_keys[MOVES['attack']] and not self.sprite.is_attacking:
             self.sprite.attack()
 
         if self.sprite.is_attacking:
             self.sprite.update((0, 0))
         else:
-            direction = [pressed_keys[K_d] - pressed_keys[K_a],
-                         pressed_keys[K_s] - pressed_keys[K_w]]
+            direction = [pressed_keys[MOVES['right']]
+                         - pressed_keys[MOVES['left']],
+                         pressed_keys[MOVES['down']]
+                         - pressed_keys[MOVES['up']]]
             if (direction[0] > 0 and self.sprite.rect.right >=
                 constants.SCREEN_WIDTH) or (direction[0] < 0 and
                                             self.sprite.rect.left <= 0):
