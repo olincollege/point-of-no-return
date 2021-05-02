@@ -212,15 +212,8 @@ class MovingSprite(GameSprite):
         """
         Returns the current Direction facing of the sprite
         """
-        return self._current_facing
-
-    @property
-    def current_animation(self):
-        """
-        Returns the current animation type of the sprite
-        """
-        if self._current_direction == (0, 0):
-            return self._animations[f'still_{repr(self.current_facing)}']
+        if self.current_direction == (0, 0):
+            return self._current_facing
         angle = self.current_angle
         if -45 <= angle <= 45:
             self._current_facing = Direction.RIGHT
@@ -230,6 +223,15 @@ class MovingSprite(GameSprite):
             self._current_facing = Direction.UP
         elif abs(angle) >= 135:
             self._current_facing = Direction.LEFT
+        return self._current_facing
+
+    @property
+    def current_animation(self):
+        """
+        Returns the current animation type of the sprite
+        """
+        if self._current_direction == (0, 0):
+            return self._animations[f'still_{repr(self.current_facing)}']
         return self._animations[repr(self.current_facing)]
 
     def update(self, direction):
@@ -348,6 +350,12 @@ class AttackingSprite(MovingSprite):
             return self._animations[f'attack_{repr(self.current_facing)}']
         return super().current_animation
 
+    @property
+    def current_facing(self):
+        if self.is_attacking or self._knockback > 0:
+            return self._current_facing
+        return super().current_facing
+
     def damage(self, attack_direction):
         """
         Damages the sprite by removing 1 from its health
@@ -361,10 +369,13 @@ class AttackingSprite(MovingSprite):
                                      attack_direction[1] / dist)
         self._knockback = self._max_knockback
 
-    def attack(self):
+    def attack(self, direction=None):
         """
         Initiates an attack
         """
+        if direction is None:
+            direction = self.current_facing
+        self._current_facing = direction
         self._attacking = True
         self._animation_frame = 0
 

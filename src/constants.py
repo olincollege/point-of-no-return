@@ -38,8 +38,8 @@ PLAYER_KNOCKBACK_DIST = DEFAULT_KNOCKBACK_DIST
 DEMON_KNOCKBACK_DIST = DEFAULT_KNOCKBACK_DIST
 
 # Light values
-DARKNESS = 235
-LIGHT = 220
+DARKNESS = 230
+LIGHT = 200
 LIGHT_DIFF = DARKNESS - LIGHT
 LIGHT_SIZE = 175
 
@@ -57,5 +57,9 @@ MOVES = {
     'down': locals.K_s,
     'left': locals.K_a,
     'right': locals.K_d,
-    'attack': locals.K_SPACE
+    'attack': locals.K_SPACE,
+    'attack_up': locals.K_UP,
+    'attack_down': locals.K_DOWN,
+    'attack_left': locals.K_LEFT,
+    'attack_right': locals.K_RIGHT,
 }
