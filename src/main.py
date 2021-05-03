@@ -1,4 +1,5 @@
 import pygame
+import pygame_menu
 import constants
 from controller import PlayerController, DemonController, ScrollController
 from game import Game
@@ -20,29 +21,33 @@ def main():
     pygame.time.set_timer(ADD_DEMON, constants.DEMON_SPAWN_TIME)
 
     clock = pygame.time.Clock()
-    running = True
 
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.locals.KEYDOWN:
-                if event.key == pygame.locals.K_ESCAPE:
-                    running = False
-            elif event.type == pygame.locals.QUIT:
-                running = False
-            elif event.type == ADD_DEMON:
-                game.create_new_demon()
+    exited = False
+    while True:
+        if game.running:
+            for event in pygame.event.get():
+                if event.type == pygame.locals.KEYDOWN:
+                    if event.key == pygame.locals.K_ESCAPE:
+                        game.running = False
+                elif event.type == pygame.locals.QUIT:
+                    game.running = False
+                    exited = True
+                elif event.type == ADD_DEMON:
+                    game.create_new_demon()
 
-        player.update()
-        demons.update()
-        all_sprites.update()
-        game.update()
+            if exited:
+                break
 
-        if not game.player.alive():
-            running = False
+            player.update()
+            demons.update()
+            all_sprites.update()
+            game.update()
 
-        view.draw()
-        clock.tick(constants.FRAME_RATE)
+            if not game.player.alive():
+                game.running = False
 
+            view.draw()
+            clock.tick(constants.FRAME_RATE)
 
 if __name__ == '__main__':
     main()

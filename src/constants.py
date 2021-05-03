@@ -1,3 +1,4 @@
+import pygame_menu.themes
 from pygame import locals
 
 # Screen info
@@ -5,6 +6,11 @@ SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 SCREEN_SIZE = (SCREEN_WIDTH, SCREEN_HEIGHT)
 FRAME_RATE = 60
+
+# Menu constants
+GAME_THEME = pygame_menu.themes.THEME_DARK.copy()
+GAME_THEME.title_font = pygame_menu.font.FONT_8BIT
+GAME_THEME.title_close_button = False
 
 # Media constants
 IMAGE_FOLDER = '../media/images'
@@ -28,7 +34,7 @@ HEALTH_BAR_POS = (15, 15)
 DEFAULT_INVINCIBILITY = 1
 PLAYER_INVINCIBILITY = DEFAULT_INVINCIBILITY
 DEMON_INVINCIBILITY = DEFAULT_INVINCIBILITY
-TRANSPARENT_TIME = 0.2
+TRANSPARENT_TIME = 1/6
 INVINCIBILITY_ALPHA = 100
 
 # Sprite knockback times (in seconds) and distances

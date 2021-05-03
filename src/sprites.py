@@ -356,6 +356,16 @@ class AttackingSprite(MovingSprite):
             return self._current_facing
         return super().current_facing
 
+    def reset(self):
+        self.rect.center = (constants.SCREEN_WIDTH / 2,
+                            constants.SCREEN_HEIGHT / 2)
+        self._current_direction = (0, 0)
+        self._current_facing = Direction.UP
+        self._attacking = False
+        self._health = self._max_health
+        self._invincibility = 0
+        self._knockback = 0
+
     def damage(self, attack_direction):
         """
         Damages the sprite by removing 1 from its health
@@ -392,8 +402,15 @@ class AttackingSprite(MovingSprite):
                     self.current_animation['animations']) * int(
                     self.current_animation['frame_length']):
             self._attacking = False
-        if self._invincibility > 0:
+        if self.is_invincible:
             self._invincibility -= 1
+            if (self.invincibility_time // constants.TRANSPARENT_TIME) \
+                    % 2 == 0:
+                self.surf.set_alpha(255)
+            else:
+                self.surf.set_alpha(constants.INVINCIBILITY_ALPHA)
+        else:
+            self.surf.set_alpha(255)
         if self._knockback > 0:
             self._knockback -= 1
 

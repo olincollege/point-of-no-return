@@ -18,6 +18,7 @@ class Game:
         """
         Initializes this instance of the game
         """
+        self.running = False
         self.player = sprites.Player(self)
         self.demons = pygame.sprite.LayeredUpdates()
         self.obstacles = pygame.sprite.LayeredUpdates()
@@ -39,7 +40,7 @@ class Game:
         rad = random.uniform(min_rad, min_rad + dist / trig)
         spawn_pos = (rad * math.cos(theta) + constants.SCREEN_WIDTH / 2,
                      rad * math.sin(theta) + constants.SCREEN_HEIGHT / 2)
-        
+
         demon = sprites.Demon(self, spawn_pos=spawn_pos)
         self.demons.add(demon)
         self.all_sprites.add(demon)
@@ -54,6 +55,15 @@ class Game:
                                       y_val))
         self.obstacles.add(obs)
         self.all_sprites.add(obs)
+
+    def restart(self):
+        self.player.reset()
+        self.demons.empty()
+        self.obstacles.empty()
+        self.all_sprites.empty()
+        self.all_sprites.add(self.player)
+        self.create_new_obstacle(True)
+        self.running = True
 
     def update(self):
         collisions = utils.spritecollide(self.player, self.demons)
@@ -85,4 +95,3 @@ class Game:
                 and self.player.layer + constants.OBSTACLE_SPAWN_TRIGGER_DIST\
                 > self.obstacles.get_top_layer():
             self.create_new_obstacle(False)
-

@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import pygame
+import pygame_menu
 import constants
-from sprites import AttackingSprite
 
 
 class View(ABC):
@@ -46,28 +46,46 @@ class GraphicView(View):
         """
         super().__init__(game)
         self._screen = screen
+        self._start_menu = pygame_menu.Menu('Point of No Return',
+                                            constants.SCREEN_WIDTH,
+                                            constants.SCREEN_HEIGHT,
+                                            theme=constants.GAME_THEME)
+        self._end_menu = pygame_menu.Menu('GAME OVER',
+                                          constants.SCREEN_WIDTH,
+                                          constants.SCREEN_HEIGHT,
+                                          theme=constants.GAME_THEME)
+        self._start_menu.add.button('Play', self.start_game)
+        self._start_menu.add.button('Quit', pygame_menu.events.EXIT)
+        self._end_menu.add.button('Restart', self.restart_game)
+        self._end_menu.add.button('Quit', pygame_menu.events.EXIT)
 
     def setup(self):
         """
         Sets up the pygame screen
         """
         self._screen.fill((0, 0, 255))
+        self._start_menu.mainloop(self._screen)
+
+    def start_game(self):
+        self._game.running = True
+        self._start_menu.disable()
+
+    def restart_game(self):
+        self._game.restart()
+        self._end_menu.disable()
 
     def draw(self):
         """
         Displays the current game state
         """
         self._screen.fill((255, 0, 0))
+
+        if not self._game.running:
+            self._end_menu.enable()
+            self._end_menu.mainloop(self._screen)
+
         # Display all entities
         for entity in self._game.all_sprites:
-            if isinstance(entity, AttackingSprite) and entity.is_invincible:
-                if (entity.invincibility_time // constants.TRANSPARENT_TIME)\
-                        % 2 == 0:
-                    entity.surf.set_alpha(255)
-                else:
-                    entity.surf.set_alpha(constants.INVINCIBILITY_ALPHA)
-            elif entity.surf.get_alpha() < 255:
-                entity.surf.set_alpha(255)
             self._screen.blit(entity.surf, entity.rect)
 
         # Lighting circle around player
