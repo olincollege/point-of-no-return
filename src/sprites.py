@@ -1,8 +1,7 @@
 """
-Sprites in **INSERT TITLE**
+Sprites in Point of No Return
 """
 
-from datetime import datetime
 from enum import Enum
 import pygame
 from pygame.sprite import Sprite
@@ -37,12 +36,17 @@ class GameSprite(Sprite):
     A sprite class to represent any basic objects and characters
 
     Attributes:
+        surf: a pygame surface, the display image for the sprite
+        rect: a pygame rectangle, defines the position of the sprite
+        mask: a pygame mask, defines the hit-box for the sprite from the surf
         _animations: a dictionary with animation sequence names as keys and
-            lists of images representing each sequence as values
+            dictionaries with the information for each animation sequence
+            (images, center positions, animation frame rate)
         _animation_frame: an int, the current frame of the animation
-        _game: a Game that contains all the sprites
+        _layer: an int, the layer to display the sprite on
         _last_animation: a tuple, first element is the animation dict from
             _animations, second element is the frame of that animation
+        _game: a Game that contains all the sprites
     """
     def __init__(self, game, image_path, spawn_pos=None):
         """
@@ -138,7 +142,7 @@ class GameSprite(Sprite):
 
 class MovingSprite(GameSprite):
     """
-    A sprite class to represent a basic character that can move
+    A sprite class to represent a basic character/object that can move
 
     Attributes:
         _speed: maximum speed in pixels per second
@@ -228,7 +232,7 @@ class MovingSprite(GameSprite):
     @property
     def current_animation(self):
         """
-        Returns the current animation type of the sprite
+        Returns the current animation type of the sprite based on the facing
         """
         if self._current_direction == (0, 0):
             return self._animations[f'still_{repr(self.current_facing)}']
@@ -243,6 +247,7 @@ class MovingSprite(GameSprite):
                 target speed as percentage of max
         """
         super().update()
+        # Detect obstacle collisions and move the sprite accordingly
         collisions = utils.spritecollide(self, self._game.obstacles)
         for obstacle in collisions:
             threshold = self.rect.height * .25
@@ -294,8 +299,15 @@ class AttackingSprite(MovingSprite):
             image_path: string giving the path to the character art. Defaults
                 to None, which will set a white 50x50 square
             max_health: int representing the max health of the sprite
+            invincibility_time: a float, the time in seconds that this sprite
+                is invincible for after being attacked.
+            knockback_time: a float, the time in seconds that this sprite gets
+                knocked backward for after being attacked
+            knockback_dist: an int, the number of pixels the sprite gets knocked
+                back after being attacked
         """
         super().__init__(game, speed, image_path, spawn_pos)
+        # Add attacking animations
         path = f'{constants.IMAGE_FOLDER}/{image_path}'
         for animation in ("attack_up", "attack_down", "attack_left",
                           "attack_right"):
@@ -393,15 +405,18 @@ class AttackingSprite(MovingSprite):
         """
         Updates the state of the sprite including animation and movement
         """
+        # Handle the sprite getting knocked back by an attack
         if self._knockback > 0:
             step = self._knockback_dist/self._max_knockback / self.frame_speed
             direction = (direction[0] + self._knockback_direction[0] * step,
                          direction[1] + self._knockback_direction[1] * step)
         super().update(direction)
+        # Handle the sprite attacking
         if self._attacking and self._animation_frame == len(
                     self.current_animation['animations']) * int(
                     self.current_animation['frame_length']):
             self._attacking = False
+        # Handle if the sprite is invincible and flash the image
         if self.is_invincible:
             self._invincibility -= 1
             if (self.invincibility_time // constants.TRANSPARENT_TIME) \
@@ -411,6 +426,7 @@ class AttackingSprite(MovingSprite):
                 self.surf.set_alpha(constants.INVINCIBILITY_ALPHA)
         else:
             self.surf.set_alpha(255)
+        # Change the knockback time left
         if self._knockback > 0:
             self._knockback -= 1
 
@@ -451,7 +467,7 @@ class Demon(AttackingSprite):
         Args:
             game: a Game that contains all the sprites
             spawn_pos: a tuple of 2 ints, where to spawn the demon, defaults
-                to top left
+                to the center of the screen
         """
         super().__init__(game, constants.DEMON_SPEED, 'demon', spawn_pos,
                          constants.DEMON_HEALTH, constants.DEMON_INVINCIBILITY)
@@ -467,7 +483,7 @@ class Obstacle(GameSprite):
 
         Args:
             game: a Game that contains all the sprites
-            spawn_pos: a tuple of 2 ints, where to spawn the demon, defaults
-                to top left
+            spawn_pos: a tuple of 2 ints, where to spawn the obstacle, defaults
+                to the center of the screen
         """
         super().__init__(game, 'obstacle', spawn_pos)

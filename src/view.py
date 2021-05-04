@@ -1,3 +1,6 @@
+"""
+View classes for Point of No Return
+"""
 from abc import ABC, abstractmethod
 import pygame
 import pygame_menu
@@ -7,6 +10,9 @@ import constants
 class View(ABC):
     """
     Handles the drawing of the game
+
+    Attributes:
+        _game: the Game to display with this class
     """
     def __init__(self, game):
         """
@@ -34,6 +40,11 @@ class View(ABC):
 class GraphicView(View):
     """
     Draws game in pygame graphic window
+
+    Attributes:
+        _screen: a screen to display the game items on
+        _start_menu: a pygame_menu with the start menu for the game
+        _end_menu: a pygame_menu with the end menu for the game
     """
 
     def __init__(self, game, screen):
@@ -61,16 +72,22 @@ class GraphicView(View):
 
     def setup(self):
         """
-        Sets up the pygame screen
+        Sets up the pygame screen by filling it and starting the start screen
         """
         self._screen.fill((0, 0, 255))
         self._start_menu.mainloop(self._screen)
 
     def start_game(self):
+        """
+        Start the game and disable the start menu
+        """
         self._game.running = True
         self._start_menu.disable()
 
     def restart_game(self):
+        """
+        Restart the game and disable the end menu
+        """
         self._game.restart()
         self._end_menu.disable()
 
@@ -80,7 +97,7 @@ class GraphicView(View):
         """
         self._screen.fill((255, 0, 0))
 
-        if not self._game.running:
+        if not self._game.player.alive():
             self._end_menu.enable()
             self._end_menu.mainloop(self._screen)
 

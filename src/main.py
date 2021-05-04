@@ -1,5 +1,7 @@
+"""
+Main class with game loop for Point of No Return
+"""
 import pygame
-import pygame_menu
 import constants
 from controller import PlayerController, DemonController, ScrollController
 from game import Game
@@ -8,6 +10,9 @@ from view import GraphicView
 
 
 def main():
+    """
+    Initializes pygame, runs the main game loop
+    """
     pygame.init()
     screen = pygame.display.set_mode(constants.SCREEN_SIZE)
     game = Game()
@@ -23,7 +28,7 @@ def main():
     clock = pygame.time.Clock()
 
     exited = False
-    while True:
+    while not exited:
         if game.running:
             for event in pygame.event.get():
                 if event.type == pygame.locals.KEYDOWN:
@@ -34,9 +39,6 @@ def main():
                     exited = True
                 elif event.type == ADD_DEMON:
                     game.create_new_demon()
-
-            if exited:
-                break
 
             player.update()
             demons.update()

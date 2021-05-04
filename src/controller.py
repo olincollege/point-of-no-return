@@ -1,3 +1,6 @@
+"""
+Controllers for Point of No Return
+"""
 from abc import ABC, abstractmethod
 import pygame
 import constants
@@ -7,7 +10,11 @@ from sprites import Direction
 
 class Controller(ABC):
     """
-    Controls sprites
+    Controls sprites in the game
+
+    Attributes:
+        _game: an instance of Game to update the state of
+        _sprite: a Sprite or Sprite group to update with the controller
     """
     def __init__(self, game, sprite):
         """
@@ -47,11 +54,18 @@ class PlayerController(Controller):
     Controls the player with player input
     """
     def __init__(self, game):
+        """
+        Creates a Controller for the player
+
+        Args:
+            game: a Game containing the player to update with this controller
+                and the game state to update
+        """
         super().__init__(game, game.player)
 
     def update(self):
         """
-        Updates the player state
+        Updates the player state based on user keyboard input
         """
         pressed_keys = pygame.key.get_pressed()
         if not self.sprite.is_attacking:
@@ -66,6 +80,7 @@ class PlayerController(Controller):
             elif pressed_keys[MOVES['attack_right']]:
                 self.sprite.attack(Direction.RIGHT)
 
+        # If the sprite is attacking, lock the player's movement
         if self.sprite.is_attacking:
             self.sprite.update((0, 0))
         else:
@@ -91,11 +106,18 @@ class DemonController(Controller):
     Controls the demons
     """
     def __init__(self, game):
+        """
+        Creates a Controller for the demons
+
+        Args:
+            game: a Game containing the demon Sprite Group to update with this
+                controller and the game state to update
+        """
         super().__init__(game, game.demons)
 
     def update(self):
         """
-        Updates the demon states
+        Updates the demon states to move towards the player
         """
         for demon in self.sprite:
             player_pos = self.game.player.rect.center
@@ -112,11 +134,18 @@ class ScrollController(Controller):
     Controls all sprites to make the game scroll with player
     """
     def __init__(self, game):
+        """
+        Creates a Controller for all of the sprites
+
+        Args:
+            game: a Game containing the Sprites to update with this controller
+                and the game state to update
+        """
         super().__init__(game, game.all_sprites)
 
     def update(self):
         """
-        Updates all sprite positions
+        Updates all sprite positions to scroll as the player moves vertically
         """
         for entity in self.sprite:
             entity.move((0, -self.game.player.current_direction[1]

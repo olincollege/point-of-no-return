@@ -1,5 +1,5 @@
 """
-**INSERT TITLE** Game
+Point of No Return Game class
 """
 
 import math
@@ -27,6 +27,9 @@ class Game:
         self.create_new_obstacle(True)
 
     def create_new_demon(self):
+        """
+        Spawns a new demon in the game at a random location outside the screen.
+        """
         min_x = constants.SCREEN_WIDTH + constants.DEMON_MIN_SPAWN_DIST
         min_y = constants.SCREEN_HEIGHT + constants.DEMON_MIN_SPAWN_DIST
         dist = constants.DEMON_MAX_SPAWN_DIST - constants.DEMON_MIN_SPAWN_DIST
@@ -46,6 +49,13 @@ class Game:
         self.all_sprites.add(demon)
 
     def create_new_obstacle(self, is_top):
+        """
+        Spawns a new obstacle in the game
+
+        Args:
+            is_top: a boolean, True if the obstacles should spawn above the
+                screen, False if it should spawn below
+        """
         y_val = -random.randint(constants.OBSTACLE_MIN_SPAWN_DIST,
                                 constants.OBSTACLE_MAX_SPAWN_DIST)
         if not is_top:
@@ -57,6 +67,9 @@ class Game:
         self.all_sprites.add(obs)
 
     def restart(self):
+        """
+        Resets game state and restarts the game
+        """
         self.player.reset()
         self.demons.empty()
         self.obstacles.empty()
@@ -66,6 +79,11 @@ class Game:
         self.running = True
 
     def update(self):
+        """
+        Updates the game state, including checking attacks against demons and
+        damage to the player. Also creates new obstacles as the player moves
+        forward or backward on the map.
+        """
         collisions = utils.spritecollide(self.player, self.demons)
         for demon in collisions:
             if utils.touching_sword(self.player, demon):

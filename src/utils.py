@@ -1,3 +1,6 @@
+"""
+Utility helper functions for Point of No Return
+"""
 import json
 import os
 import pygame
