@@ -3,8 +3,8 @@ Point of No Return Game class
 """
 
 import math
-import pygame
 import random
+import pygame
 import constants
 import sprites
 import utils

@@ -3,9 +3,9 @@ Sprites in Point of No Return
 """
 
 from enum import Enum
+from math import atan2, pi
 import pygame
 from pygame.sprite import Sprite
-from math import atan2, pi
 import constants
 import utils
 

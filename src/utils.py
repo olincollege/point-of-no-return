@@ -6,16 +6,16 @@ import os
 import pygame
 import constants
 
-event_num = pygame.USEREVENT
+EVENT_NUM = pygame.USEREVENT
 
 
 def new_event():
     """
     Returns a new event that is unique from all previously defined events
     """
-    global event_num
-    event_num += 1
-    return event_num
+    global EVENT_NUM
+    EVENT_NUM += 1
+    return EVENT_NUM
 
 
 def get_animation_info(path):
@@ -61,14 +61,15 @@ def is_sword(color):
     Returns:
         a boolean, True iff the color could represent a pixel on the sword
     """
-    r = color[0]
-    g = color[1]
-    b = color[2]
-    av = (r + g + b) / 3
-    max_diff = av * 0.05
-    if abs(r - g) > max_diff or abs(r - b) > max_diff or abs(g - b) > max_diff:
+    red = color[0]
+    green = color[1]
+    blue = color[2]
+    average_value = (red + green + blue) / 3
+    max_diff = average_value * 0.05
+    if abs(red - green) > max_diff or abs(red - blue) > max_diff or\
+            abs(green - blue) > max_diff:
         return False
-    return 100 < av < 225
+    return 100 < average_value < 225
 
 
 def touching_sword(player, demon):

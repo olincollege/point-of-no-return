@@ -46,7 +46,7 @@ class Controller(ABC):
         """
         Updates the game model based on player inputs
         """
-        pass
+        return
 
 
 class PlayerController(Controller):

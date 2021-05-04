@@ -23,6 +23,7 @@ class View(ABC):
         """
         self._game = game
 
+    @abstractmethod
     def setup(self):
         """
         Does any necessary setup for the view
@@ -34,7 +35,7 @@ class View(ABC):
         """
         Draws the game based on current state
         """
-        pass
+        return
 
 
 class GraphicView(View):

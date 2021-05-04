@@ -1,3 +1,7 @@
+"""
+Constants for Point of No Return
+"""
+
 import pygame_menu.themes
 from pygame import locals
 
