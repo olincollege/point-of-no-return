@@ -1,10 +1,13 @@
+import pygame
 import pytest
-from game import Game
-from sprites import Player, Demon
+import constants
 import utils
 
 
 def test_new_event():
+    """
+    Tests whether the new_event function returns unique events
+    """
     nums = set()
     runs = 10
     for _ in range(runs):
@@ -13,10 +16,15 @@ def test_new_event():
 
 
 def test_animation_info():
+    """
+    Tests whether the get_animation_info returns the stuff from /test_animations
+    """
+    pygame.init()
+    screen = pygame.display.set_mode((1, 1))
     info = utils.get_animation_info("test_animations")
     assert len(info['animations']) == 4
-    assert info['positions'] == [[1, 2], [3, 4], [5, 6], [7, 8]]
-    assert info['fps'] == 5
+    assert info['positions'] == [(1, 2), (3, 4), (5, 6), (7, 8)]
+    assert info['frame_length'] == constants.FRAME_RATE / 5
 
 
 IS_SWORD_CASES = [
@@ -36,4 +44,7 @@ IS_SWORD_CASES = [
 
 @pytest.mark.parametrize("color,is_sword", IS_SWORD_CASES)
 def test_is_sword(color, is_sword):
+    """
+    Tests whether the is_sword function properly detects swords
+    """
     assert utils.is_sword(color) == is_sword
