@@ -33,7 +33,7 @@ def main():
             for event in pygame.event.get():
                 if event.type == pygame.locals.KEYDOWN:
                     if event.key == pygame.locals.K_ESCAPE:
-                        game.running = False
+                        game.paused = True
                 elif event.type == pygame.locals.QUIT:
                     game.running = False
                     exited = True

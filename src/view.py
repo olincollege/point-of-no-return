@@ -66,16 +66,32 @@ class GraphicView(View):
                                           constants.SCREEN_WIDTH,
                                           constants.SCREEN_HEIGHT,
                                           theme=constants.GAME_THEME)
+        self._pause_menu = pygame_menu.Menu('PAUSED',
+                                            constants.SCREEN_WIDTH,
+                                            constants.SCREEN_HEIGHT,
+                                            theme=constants.GAME_THEME)
         self._start_menu.add.button('Play', self.start_game)
         self._start_menu.add.button('Quit', pygame_menu.events.EXIT)
         self._end_menu.add.button('Restart', self.restart_game)
         self._end_menu.add.button('Quit', pygame_menu.events.EXIT)
+        self._pause_menu.add.button('Resume', self.unpause)
+        self._pause_menu.add.button('Main  Menu', self.main_menu)
 
     def setup(self):
         """
         Sets up the pygame screen by filling it and starting the start screen
         """
         self._screen.fill((0, 0, 255))
+        self.main_menu()
+
+    def main_menu(self):
+        """
+        Sets up start menu
+        """
+        if not self._start_menu.is_enabled():
+            self._game.restart()
+            self._pause_menu.disable()
+            self._start_menu.enable()
         self._start_menu.mainloop(self._screen)
 
     def start_game(self):
@@ -92,11 +108,22 @@ class GraphicView(View):
         self._game.restart()
         self._end_menu.disable()
 
+    def unpause(self):
+        """
+        Unpause the game and disable the pause menu
+        """
+        self._game.paused = False
+        self._pause_menu.disable()
+
     def draw(self):
         """
         Displays the current game state
         """
         self._screen.fill((255, 0, 0))
+
+        if self._game.paused:
+            self._pause_menu.enable()
+            self._pause_menu.mainloop(self._screen)
 
         if not self._game.player.alive():
             self._end_menu.enable()
@@ -124,11 +151,31 @@ class GraphicView(View):
         self._screen.blit(dark, (0, 0))
 
         # Health bar
-        pygame.draw.rect(self._screen, constants.HEALTH_BAR_COLOR,
+        pygame.draw.rect(self._screen, constants.HEALTH_BAR_COLOR_1,
                          (constants.HEALTH_BAR_POS[0],
                           constants.HEALTH_BAR_POS[1],
                           constants.HEALTH_BAR_UNIT_WIDTH *
                           self._game.player.health,
                           constants.HEALTH_BAR_HEIGHT))
+        if self._game.player.is_invincible:
+            if (self._game.player.invincibility_time //
+                    constants.TRANSPARENT_TIME) % 2 == 0:
+                pygame.draw.rect(self._screen,
+                                 constants.HEALTH_BAR_COLOR_1,
+                                 (constants.HEALTH_BAR_POS[0]
+                                  + constants.HEALTH_BAR_UNIT_WIDTH
+                                  * self._game.player.health,
+                                  constants.HEALTH_BAR_POS[1],
+                                  constants.HEALTH_BAR_UNIT_WIDTH,
+                                  constants.HEALTH_BAR_HEIGHT))
+            else:
+                pygame.draw.rect(self._screen,
+                                 constants.HEALTH_BAR_COLOR_2,
+                                 (constants.HEALTH_BAR_POS[0]
+                                  + constants.HEALTH_BAR_UNIT_WIDTH
+                                  * self._game.player.health,
+                                  constants.HEALTH_BAR_POS[1],
+                                  constants.HEALTH_BAR_UNIT_WIDTH,
+                                  constants.HEALTH_BAR_HEIGHT))
 
         pygame.display.flip()

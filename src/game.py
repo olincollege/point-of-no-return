@@ -13,12 +13,21 @@ import utils
 class Game:
     """
     Holds the current game state
+
+    Attributes:
+        running: a boolean, True if the game is currently running, False if not
+        paused: a boolean, True if the game is paused, False if not
+        player: a Player sprite for the player in the game
+        demons: a LayeredUpdates Sprite Group of demons
+        obstacles: a LayeredUpdates Sprite Group of obstacles
+        all_sprites: a LayeredUpdates Sprite Group of all sprites in the game
     """
     def __init__(self):
         """
         Initializes this instance of the game
         """
         self.running = False
+        self.paused = False
         self.player = sprites.Player(self)
         self.demons = pygame.sprite.LayeredUpdates()
         self.obstacles = pygame.sprite.LayeredUpdates()
@@ -77,6 +86,7 @@ class Game:
         self.all_sprites.add(self.player)
         self.create_new_obstacle(True)
         self.running = True
+        self.paused = False
 
     def update(self):
         """

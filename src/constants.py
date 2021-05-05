@@ -4,6 +4,7 @@ Constants for Point of No Return
 
 import pygame_menu.themes
 from pygame import locals
+from pygame_menu.themes import Theme
 
 # Screen info
 SCREEN_WIDTH = 800
@@ -12,9 +13,20 @@ SCREEN_SIZE = (SCREEN_WIDTH, SCREEN_HEIGHT)
 FRAME_RATE = 60
 
 # Menu constants
-GAME_THEME = pygame_menu.themes.THEME_DARK.copy()
-GAME_THEME.title_font = pygame_menu.font.FONT_8BIT
-GAME_THEME.title_close_button = False
+GAME_THEME = Theme(
+    background_color=
+    pygame_menu.baseimage.BaseImage(
+            '../media/images/backgrounds/start_menu.png'),
+    selection_color=(255, 255, 255),
+    title_bar_style=pygame_menu.widgets.MENUBAR_STYLE_NONE,
+    title_close_button=False,
+    title_font=pygame_menu.font.FONT_8BIT,
+    title_font_size=45,
+    title_offset=(30, 30),
+    widget_font=pygame_menu.font.FONT_BEBAS,
+    widget_font_size=50,
+    widget_padding=15
+)
 
 # Media constants
 IMAGE_FOLDER = '../media/images'
@@ -29,10 +41,11 @@ OBSTACLE_SPEED = SCROLL_SPEED
 # Sprite healths
 PLAYER_HEALTH = 5
 DEMON_HEALTH = 2
-HEALTH_BAR_COLOR = (0, 100, 0)
-HEALTH_BAR_UNIT_WIDTH = 40
-HEALTH_BAR_HEIGHT = 15
-HEALTH_BAR_POS = (15, 15)
+HEALTH_BAR_COLOR_1 = (0, 100, 0)
+HEALTH_BAR_COLOR_2 = (100, 0, 0)
+HEALTH_BAR_UNIT_WIDTH = 80
+HEALTH_BAR_HEIGHT = 20
+HEALTH_BAR_POS = (20, 20)
 
 # Sprite invincibility times in seconds
 DEFAULT_INVINCIBILITY = 1
