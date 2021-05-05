@@ -63,24 +63,38 @@ class GraphicView(View):
                                             constants.SCREEN_WIDTH,
                                             constants.SCREEN_HEIGHT,
                                             theme=constants.GAME_THEME)
+        self._start_menu.add.button('Play', self.start_game)
+        self._start_menu.add.button('Controls', self.controls_menu)
+        self._start_menu.add.button('Quit', pygame_menu.events.EXIT)
+
+        self._controls_menu = pygame_menu.Menu('CONTROLS',
+                                               constants.SCREEN_WIDTH,
+                                               constants.SCREEN_HEIGHT,
+                                               theme=constants.GAME_THEME)
+        self._controls_menu.add.label('Move: WASD')
+        self._controls_menu.add.label('Attack: Arrow Keys')
+        self._controls_menu.add.label('Attack Current Direction: Space')
+        self._controls_menu.add.label('Pause: Esc')
+        self._controls_menu.add.button('Back', self.main_menu)
+
         self._end_menu = pygame_menu.Menu('GAME OVER',
                                           constants.SCREEN_WIDTH,
                                           constants.SCREEN_HEIGHT,
                                           theme=constants.GAME_THEME)
-        self._pause_menu = pygame_menu.Menu('PAUSED',
-                                            constants.SCREEN_WIDTH,
-                                            constants.SCREEN_HEIGHT,
-                                            theme=constants.GAME_THEME)
-        self._start_menu.add.button('Play', self.start_game)
-        self._start_menu.add.button('Quit', pygame_menu.events.EXIT)
         self._end_menu.add.label(f'Score: {self._game.score}', label_id='score')
         self._end_menu.get_widget('score')\
             .update_font({'color': constants.GAME_THEME.selection_color,
                           'size': constants.GAME_THEME.widget_font_size + 20})
         self._end_menu.add.button('Restart', self.restart_game)
         self._end_menu.add.button('Main  Menu', self.main_menu)
+
+        self._pause_menu = pygame_menu.Menu('PAUSED',
+                                            constants.SCREEN_WIDTH,
+                                            constants.SCREEN_HEIGHT,
+                                            theme=constants.GAME_THEME)
         self._pause_menu.add.button('Resume', self.unpause)
         self._pause_menu.add.button('Main  Menu', self.main_menu)
+
         pygame.mixer.music.load('../media/audio/background_music.mp3')
         self._sound_effects = {
             'player_attack': pygame.mixer.Sound(
@@ -104,11 +118,20 @@ class GraphicView(View):
         """
         if not self._start_menu.is_enabled():
             self._game.restart()
+            self._controls_menu.disable()
             self._pause_menu.disable()
             self._end_menu.disable()
             self._start_menu.enable()
         pygame.mixer.music.play(-1)
         self._start_menu.mainloop(self._screen)
+
+    def controls_menu(self):
+        """
+        Sets up the controls menu
+        """
+        self._start_menu.disable()
+        self._controls_menu.enable()
+        self._controls_menu.mainloop(self._screen)
 
     def start_game(self):
         """
