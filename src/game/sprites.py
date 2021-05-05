@@ -29,6 +29,7 @@ class Direction(Enum):
             return "left"
         if self == Direction.RIGHT:
             return "right"
+        return None
 
 
 class GameSprite(Sprite):
@@ -62,14 +63,14 @@ class GameSprite(Sprite):
         super().__init__()
         # Creates animations dictionary and a key for the still images
         self._animations = {'stills': utils.get_animation_info(
-            f'../media/images/{image_path}')}
+            f'{constants.IMAGE_FOLDER}/{image_path}')}
         # Sets current character image to the first still
         self.surf = self._animations['stills']['animations'][0]
         self._animation_frame = 0
         # Default spawn position is the center of the screen
         if spawn_pos is None:
-            self.rect = self.surf.get_rect(center=(constants.SCREEN_WIDTH/2,
-                                                   constants.SCREEN_HEIGHT/2))
+            self.rect = self.surf.get_rect(center=(constants.SCREEN_WIDTH / 2,
+                                                   constants.SCREEN_HEIGHT / 2))
         else:
             self.rect = self.surf.get_rect(center=spawn_pos)
         self.mask = pygame.mask.from_surface(self.surf)
@@ -371,11 +372,17 @@ class AttackingSprite(MovingSprite):
 
     @property
     def current_facing(self):
+        """
+        Return the sprite's current Direction facing
+        """
         if self.is_attacking or self._knockback > 0:
             return self._current_facing
         return super().current_facing
 
     def reset(self):
+        """
+        Reset sprite attributes
+        """
         self.rect.center = (constants.SCREEN_WIDTH / 2,
                             constants.SCREEN_HEIGHT / 2)
         self._current_direction = (0, 0)

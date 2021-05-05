@@ -6,17 +6,6 @@ import os
 import pygame
 import constants
 
-EVENT_NUM = pygame.USEREVENT
-
-
-def new_event():
-    """
-    Returns a new event that is unique from all previously defined events
-    """
-    global EVENT_NUM
-    EVENT_NUM += 1
-    return EVENT_NUM
-
 
 def get_animation_info(path):
     """

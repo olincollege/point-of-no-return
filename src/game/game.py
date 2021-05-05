@@ -113,7 +113,7 @@ class Game:
                     self.player.damage(demon.current_direction)
             if self.player.health <= 0:
                 self.player.kill()
-        self.score += self.demons_killed
+        self.score += self.demons_killed * 100
 
         for group in (self.all_sprites, self.demons, self.obstacles):
             for entity in group:

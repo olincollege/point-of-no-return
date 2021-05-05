@@ -1,18 +1,10 @@
+"""
+Tests for functions in utils.py
+"""
 import pygame
 import pytest
-import constants
-import utils
-
-
-def test_new_event():
-    """
-    Tests whether the new_event function returns unique events
-    """
-    nums = set()
-    runs = 10
-    for _ in range(runs):
-        nums.add(utils.new_event())
-    assert len(nums) == runs
+from ..game import constants
+from ..game import utils
 
 
 def test_animation_info():
@@ -20,7 +12,7 @@ def test_animation_info():
     Tests whether the get_animation_info returns the stuff from /test_animations
     """
     pygame.init()
-    screen = pygame.display.set_mode((1, 1))
+    _ = pygame.display.set_mode((1, 1))
     info = utils.get_animation_info("test_animations")
     assert len(info['animations']) == 4
     assert info['positions'] == [(1, 2), (3, 4), (5, 6), (7, 8)]

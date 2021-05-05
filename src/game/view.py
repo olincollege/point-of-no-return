@@ -81,14 +81,15 @@ class GraphicView(View):
         self._end_menu.add.button('Main  Menu', self.main_menu)
         self._pause_menu.add.button('Resume', self.unpause)
         self._pause_menu.add.button('Main  Menu', self.main_menu)
-        pygame.mixer.music.load('../media/audio/background_music.mp3')
+        pygame.mixer.music.load(
+            f'{constants.AUDIO_FOLDER}/background_music.mp3')
         self._sound_effects = {
             'player_attack': pygame.mixer.Sound(
-                '../media/audio/player_attack.wav'),
+                f'{constants.AUDIO_FOLDER}/player_attack.wav'),
             'player_hit': pygame.mixer.Sound(
-                '../media/audio/player_hit.wav'),
+                f'{constants.AUDIO_FOLDER}/player_hit.wav'),
             'demon_hit': pygame.mixer.Sound(
-                '../media/audio/demon_hit.wav')
+                f'{constants.AUDIO_FOLDER}/demon_hit.wav')
         }
 
     def setup(self):
@@ -188,7 +189,7 @@ class GraphicView(View):
                           constants.HEALTH_BAR_HEIGHT))
         if self._game.player.is_invincible:
             if (self._game.player.invincibility_time //
-                    constants.TRANSPARENT_TIME) % 2 == 0:
+                constants.TRANSPARENT_TIME) % 2 == 0:
                 pygame.draw.rect(self._screen,
                                  constants.HEALTH_BAR_COLOR_1,
                                  (constants.HEALTH_BAR_POS[0]

@@ -1,10 +1,19 @@
 """
 Constants for Point of No Return
 """
-
+import pygame
 import pygame_menu.themes
 from pygame import locals
 from pygame_menu.themes import Theme
+from enum import IntEnum
+
+
+class GameEvent(IntEnum):
+    """d
+    Stores game event numbers
+    """
+    ADD_DEMON = pygame.USEREVENT + 1
+
 
 # Screen info
 SCREEN_WIDTH = 800
@@ -12,11 +21,15 @@ SCREEN_HEIGHT = 600
 SCREEN_SIZE = (SCREEN_WIDTH, SCREEN_HEIGHT)
 FRAME_RATE = 60
 
+# Media constants
+IMAGE_FOLDER = '../../media/images'
+AUDIO_FOLDER = '../../media/audio'
+
 # Menu constants
 GAME_THEME = Theme(
     background_color=
     pygame_menu.baseimage.BaseImage(
-            '../media/images/backgrounds/start_menu.png'),
+        f'{IMAGE_FOLDER}/backgrounds/start_menu.png'),
     selection_color=(255, 255, 255),
     title_bar_style=pygame_menu.widgets.MENUBAR_STYLE_NONE,
     title_close_button=False,
@@ -27,10 +40,6 @@ GAME_THEME = Theme(
     widget_font_size=50,
     widget_padding=15
 )
-
-# Media constants
-IMAGE_FOLDER = '../media/images'
-AUDIO_FOLDER = '../media/audio'
 
 # Sprite speeds
 PLAYER_SPEED = 150

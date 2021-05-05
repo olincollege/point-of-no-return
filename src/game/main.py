@@ -5,7 +5,6 @@ import pygame
 import constants
 from controller import PlayerController, DemonController, ScrollController
 from game import Game
-from utils import new_event
 from view import GraphicView
 
 
@@ -22,8 +21,8 @@ def main():
     view = GraphicView(game, screen)
     view.setup()
 
-    ADD_DEMON = new_event()
-    pygame.time.set_timer(ADD_DEMON, constants.DEMON_SPAWN_TIME)
+    pygame.time.set_timer(constants.GameEvent.ADD_DEMON,
+                          constants.DEMON_SPAWN_TIME)
 
     clock = pygame.time.Clock()
 
@@ -37,7 +36,7 @@ def main():
                 elif event.type == pygame.locals.QUIT:
                     game.running = False
                     exited = True
-                elif event.type == ADD_DEMON:
+                elif event.type == constants.GameEvent.ADD_DEMON:
                     game.create_new_demon()
 
             player.update()
@@ -50,6 +49,7 @@ def main():
 
             view.draw()
             clock.tick(constants.FRAME_RATE)
+
 
 if __name__ == '__main__':
     main()
