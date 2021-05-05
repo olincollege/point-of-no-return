@@ -9,7 +9,7 @@ from enum import IntEnum
 
 
 class GameEvent(IntEnum):
-    """d
+    """
     Stores game event numbers
     """
     ADD_DEMON = pygame.USEREVENT + 1

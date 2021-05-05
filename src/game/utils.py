@@ -4,7 +4,7 @@ Utility helper functions for Point of No Return
 import json
 import os
 import pygame
-import constants
+import src.game.constants as constants
 
 
 def get_animation_info(path):
