@@ -40,6 +40,10 @@ GAME_THEME = Theme(
     widget_font_size=50,
     widget_padding=15
 )
+CONTROL_COLOR = (230, 230, 230)
+CONTROL_SIZE = 30
+SCORE_COLOR = GAME_THEME.selection_color
+SCORE_SIZE = GAME_THEME.widget_font_size + 20
 
 # Sprite speeds
 PLAYER_SPEED = 150

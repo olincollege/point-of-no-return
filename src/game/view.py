@@ -71,20 +71,30 @@ class GraphicView(View):
                                                constants.SCREEN_WIDTH,
                                                constants.SCREEN_HEIGHT,
                                                theme=constants.GAME_THEME)
-        self._controls_menu.add.label('Move: WASD')
-        self._controls_menu.add.label('Attack: Arrow Keys')
-        self._controls_menu.add.label('Attack Current Direction: Space')
-        self._controls_menu.add.label('Pause: Esc')
-        self._controls_menu.add.button('Back', self.main_menu)
+        self._controls_menu.add.label('Move: WASD').update_font({
+            'color': constants.CONTROL_COLOR,
+            'size': constants.CONTROL_SIZE})
+        self._controls_menu.add.label('Attack: Arrow Keys').update_font({
+            'color': constants.CONTROL_COLOR,
+            'size': constants.CONTROL_SIZE})
+        self._controls_menu.add.label('Attack Current Direction: Space')\
+            .update_font({'color': constants.CONTROL_COLOR,
+                          'size': constants.CONTROL_SIZE})
+        self._controls_menu.add.label('Pause: Esc').update_font({
+            'color': constants.CONTROL_COLOR,
+            'size': constants.CONTROL_SIZE})
+        self._controls_menu.add.button('Back', self.main_menu).update_font({
+            'color': constants.CONTROL_COLOR,
+            'size': constants.CONTROL_SIZE})
 
         self._end_menu = pygame_menu.Menu('GAME OVER',
                                           constants.SCREEN_WIDTH,
                                           constants.SCREEN_HEIGHT,
                                           theme=constants.GAME_THEME)
-        self._end_menu.add.label(f'Score: {self._game.score}', label_id='score')
-        self._end_menu.get_widget('score')\
-            .update_font({'color': constants.GAME_THEME.selection_color,
-                          'size': constants.GAME_THEME.widget_font_size + 20})
+        self._end_menu.add.label(f'Score: {self._game.score}',
+                                 label_id='score')\
+            .update_font({'color': constants.SCORE_COLOR,
+                          'size': constants.SCORE_SIZE})
         self._end_menu.add.button('Restart', self.restart_game)
         self._end_menu.add.button('Main  Menu', self.main_menu)
 
