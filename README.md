@@ -11,3 +11,12 @@ Clone this repository to your machine. From the command line, navigate to the `s
 Our game is built using [PyGame](https://www.pygame.org/), a Python wrapper for the [Simple DirectMedia Layer (SDL) library](https://www.libsdl.org/), which allows access to a computer's multimedia components. We also used the [PyGame-menu](https://pygame-menu.readthedocs.io/en/4.0.4/) library for main menus in the game. To install the packages needed to run this game, run the following command in Bash:
 
 `$ pip install pygame pygame-menu`
+
+## Media Credit
+Images:
+
+
+
+Audio:
+
+Background music- ["Ghosts in the wind"](http://dig.ccmixter.org/files/Citizen_X0/29247) by Abstract Audio on digiccMixter
