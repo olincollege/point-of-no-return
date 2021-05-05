@@ -14,17 +14,20 @@ Our game is built using [PyGame](https://www.pygame.org/), a Python wrapper for 
 
 ## Included Files
 `/src`: Contains all source code files (`.py`)
-* `sprites.py`: All sprite classes for the game, including basic `GameSprite`, and subclasses `MovingSprite` and `AttackingSprite`. `Player`, `Demon` and `Obstacle` are all subclasses of one of the three larger sprite classes.
-* `game.py`: Contains `Game` class which stores the full game state.
-* `controller.py`: All controllers for the game, which dictate how the sprites move and interact based on player input or basic AI. Includes abstract `Controller` class and subclasses `PlayerController`, `DemonController`, and `ScrollController`.
-* `view.py`: Contains classes for the GUI to display the game. Includes abstract `View` class to accomodate for potential other view types, and subclass `GraphicView` that displays the game in 2D using PyGame.
-* `main.py`: Initializes PyGame, view, controllers, and game state. Runs main game loop, which includes PyGame events, updating the game state, and drawing the game.
-* `utils.py`: Contains helper utility functions for the game.
-* `constants.py`: File for constants used across files.
+* `/game`: Contains all files for the game itself
+    * `sprites.py`: All sprite classes for the game, including basic `GameSprite`, and subclasses `MovingSprite` and `AttackingSprite`. `Player`, `Demon` and `Obstacle` are all subclasses of one of the three larger sprite classes.
+    * `game.py`: Contains `Game` class which stores the full game state.
+    * `controller.py`: All controllers for the game, which dictate how the sprites move and interact based on player input or basic AI. Includes abstract `Controller` class and subclasses `PlayerController`, `DemonController`, and `ScrollController`.
+    * `view.py`: Contains classes for the GUI to display the game. Includes abstract `View` class to accomodate for potential other view types, and subclass `GraphicView` that displays the game in 2D using PyGame.
+    * `main.py`: Initializes PyGame, view, controllers, and game state. Runs main game loop, which includes PyGame events, updating the game state, and drawing the game.
+    * `utils.py`: Contains helper utility functions for the game.
+    * `constants.py`: File for constants used across files.
+* `/testing`: Contains all files for unit testing the game using pytest
+    * `test_utils.py`: Unit tests for the functions in `game/utils.py`
 
 `/media`: Contains all media files, including images and audio, for the game.
 * `/images`: Images for sprites and background. Each sprite's folder contains folders with all of their animation frames.
-  * `info.json` files: Includes a dictionary with information for the framerate that each animation should be run at, and a list of coordinate pairs giving what point to align the animation images at (e.g. center of the head for the player sprites).
+* `info.json` files: Includes a dictionary with information for the framerate that each animation should be run at, and a list of coordinate pairs giving what point to align the animation images at (e.g. center of the head for the player sprites).
 * `/audio/`: Music and sound effect files.
 
 ## Media Credits
