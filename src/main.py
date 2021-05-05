@@ -1,5 +1,5 @@
 """
-Main class with game loop for Point of No Return
+Main class with src loop for Point of No Return
 """
 import pygame
 import constants
@@ -10,7 +10,7 @@ from view import GraphicView
 
 def main():
     """
-    Initializes pygame, runs the main game loop
+    Initializes pygame, runs the main src loop
     """
     pygame.init()
     screen = pygame.display.set_mode(constants.SCREEN_SIZE)

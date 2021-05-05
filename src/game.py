@@ -12,19 +12,19 @@ import utils
 
 class Game:
     """
-    Holds the current game state
+    Holds the current src state
 
     Attributes:
-        running: a boolean, True if the game is currently running, False if not
-        paused: a boolean, True if the game is paused, False if not
-        player: a Player sprite for the player in the game
+        running: a boolean, True if the src is currently running, False if not
+        paused: a boolean, True if the src is paused, False if not
+        player: a Player sprite for the player in the src
         demons: a LayeredUpdates Sprite Group of demons
         obstacles: a LayeredUpdates Sprite Group of obstacles
-        all_sprites: a LayeredUpdates Sprite Group of all sprites in the game
+        all_sprites: a LayeredUpdates Sprite Group of all sprites in the src
     """
     def __init__(self):
         """
-        Initializes this instance of the game
+        Initializes this instance of the src
         """
         self.running = False
         self.paused = False
@@ -39,7 +39,7 @@ class Game:
 
     def create_new_demon(self):
         """
-        Spawns a new demon in the game at a random location outside the screen.
+        Spawns a new demon in the src at a random location outside the screen.
         """
         min_x = constants.SCREEN_WIDTH + constants.DEMON_MIN_SPAWN_DIST
         min_y = constants.SCREEN_HEIGHT + constants.DEMON_MIN_SPAWN_DIST
@@ -61,7 +61,7 @@ class Game:
 
     def create_new_obstacle(self, is_top):
         """
-        Spawns a new obstacle in the game
+        Spawns a new obstacle in the src
 
         Args:
             is_top: a boolean, True if the obstacles should spawn above the
@@ -79,7 +79,7 @@ class Game:
 
     def restart(self):
         """
-        Resets game state and restarts the game
+        Resets src state and restarts the src
         """
         self.player.reset()
         self.demons.empty()
@@ -93,7 +93,7 @@ class Game:
 
     def update(self):
         """
-        Updates the game state, including checking attacks against demons and
+        Updates the src state, including checking attacks against demons and
         damage to the player. Also creates new obstacles as the player moves
         forward or backward on the map.
         """

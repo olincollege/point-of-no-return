@@ -10,7 +10,7 @@ import sprites
 
 class View(ABC):
     """
-    Handles the drawing of the game
+    Handles the drawing of the src
 
     Attributes:
         _game: the Game to display with this class
@@ -34,19 +34,19 @@ class View(ABC):
     @abstractmethod
     def draw(self):
         """
-        Draws the game based on current state
+        Draws the src based on current state
         """
         return
 
 
 class GraphicView(View):
     """
-    Draws game in pygame graphic window
+    Draws src in pygame graphic window
 
     Attributes:
-        _screen: a screen to display the game items on
-        _start_menu: a pygame_menu with the start menu for the game
-        _end_menu: a pygame_menu with the end menu for the game
+        _screen: a screen to display the src items on
+        _start_menu: a pygame_menu with the start menu for the src
+        _end_menu: a pygame_menu with the end menu for the src
     """
 
     def __init__(self, game, screen):
@@ -54,7 +54,7 @@ class GraphicView(View):
         Initializes a graphical view
 
         Args:
-            game: a Game, the game model to monitor
+            game: a Game, the src model to monitor
             screen: the Screen to display the graphics on
         """
         super().__init__(game)
@@ -145,28 +145,28 @@ class GraphicView(View):
 
     def start_game(self):
         """
-        Start the game and disable the start menu
+        Start the src and disable the start menu
         """
         self._game.running = True
         self._start_menu.disable()
 
     def restart_game(self):
         """
-        Restart the game and disable the end menu
+        Restart the src and disable the end menu
         """
         self._game.restart()
         self._end_menu.disable()
 
     def unpause(self):
         """
-        Unpause the game and disable the pause menu
+        Unpause the src and disable the pause menu
         """
         self._game.paused = False
         self._pause_menu.disable()
 
     def draw(self):
         """
-        Displays the current game state
+        Displays the current src state
         """
         self._screen.fill((255, 0, 0))
 
@@ -221,7 +221,7 @@ class GraphicView(View):
                           constants.HEALTH_BAR_HEIGHT))
         if self._game.player.is_invincible:
             if (self._game.player.invincibility_time //
-               constants.TRANSPARENT_TIME) % 2 == 0:
+                constants.TRANSPARENT_TIME) % 2 == 0:
                 pygame.draw.rect(self._screen,
                                  constants.HEALTH_BAR_COLOR_1,
                                  (constants.HEALTH_BAR_POS[0]

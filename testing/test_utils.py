@@ -3,8 +3,8 @@ Tests for functions in utils.py
 """
 import pygame
 import pytest
-from src.game.constants import FRAME_RATE
-from src.game.utils import get_animation_info, is_sword
+import src.constants as constants
+import src.utils as utils
 
 
 def test_animation_info():
@@ -13,10 +13,10 @@ def test_animation_info():
     """
     pygame.init()
     _ = pygame.display.set_mode((1, 1))
-    info = get_animation_info("test_animations")
+    info = utils.get_animation_info("test_animations")
     assert len(info['animations']) == 4
     assert info['positions'] == [(1, 2), (3, 4), (5, 6), (7, 8)]
-    assert info['frame_length'] == FRAME_RATE / 5
+    assert info['frame_length'] == constants.FRAME_RATE / 5
 
 
 IS_SWORD_CASES = [
@@ -39,4 +39,4 @@ def test_is_sword(color, sword):
     """
     Tests whether the is_sword function properly detects swords
     """
-    assert is_sword(color) == sword
+    assert utils.is_sword(color) == sword

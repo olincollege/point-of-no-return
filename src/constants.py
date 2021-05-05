@@ -10,7 +10,7 @@ from enum import IntEnum
 
 class GameEvent(IntEnum):
     """
-    Stores game event numbers
+    Stores src event numbers
     """
     ADD_DEMON = pygame.USEREVENT + 1
 
@@ -22,8 +22,8 @@ SCREEN_SIZE = (SCREEN_WIDTH, SCREEN_HEIGHT)
 FRAME_RATE = 60
 
 # Media constants
-IMAGE_FOLDER = '../../media/images'
-AUDIO_FOLDER = '../../media/audio'
+IMAGE_FOLDER = '../media/images'
+AUDIO_FOLDER = '../media/audio'
 
 # Menu constants
 GAME_THEME = Theme(

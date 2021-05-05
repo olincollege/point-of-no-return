@@ -10,7 +10,7 @@ from sprites import Direction
 
 class Controller(ABC):
     """
-    Controls sprites in the game
+    Controls sprites in the src
 
     Attributes:
         _game: an instance of Game to update the state of
@@ -30,7 +30,7 @@ class Controller(ABC):
     @property
     def game(self):
         """
-        Returns the game state
+        Returns the src state
         """
         return self._game
 
@@ -44,7 +44,7 @@ class Controller(ABC):
     @abstractmethod
     def update(self):
         """
-        Updates the game model based on player inputs
+        Updates the src model based on player inputs
         """
         return
 
@@ -59,7 +59,7 @@ class PlayerController(Controller):
 
         Args:
             game: a Game containing the player to update with this controller
-                and the game state to update
+                and the src state to update
         """
         super().__init__(game, game.player)
 
@@ -111,7 +111,7 @@ class DemonController(Controller):
 
         Args:
             game: a Game containing the demon Sprite Group to update with this
-                controller and the game state to update
+                controller and the src state to update
         """
         super().__init__(game, game.demons)
 
@@ -131,7 +131,7 @@ class DemonController(Controller):
 
 class ScrollController(Controller):
     """
-    Controls all sprites to make the game scroll with player
+    Controls all sprites to make the src scroll with player
     """
     def __init__(self, game):
         """
@@ -139,7 +139,7 @@ class ScrollController(Controller):
 
         Args:
             game: a Game containing the Sprites to update with this controller
-                and the game state to update
+                and the src state to update
         """
         super().__init__(game, game.all_sprites)
 

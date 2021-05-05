@@ -132,4 +132,4 @@ dmypy.json
 .idea/
 
 # Testing
-src/game/testing.py
+src/testing.py

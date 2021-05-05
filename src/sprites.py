@@ -489,7 +489,7 @@ class Demon(AttackingSprite):
 
 class Obstacle(GameSprite):
     """
-    A sprite for game obstacles
+    A sprite for src obstacles
     """
     def __init__(self, game, spawn_pos=None):
         """

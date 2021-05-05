@@ -4,7 +4,7 @@ Utility helper functions for Point of No Return
 import json
 import os
 import pygame
-import src.game.constants as constants
+import src.constants as constants
 
 
 def get_animation_info(path):
@@ -17,7 +17,7 @@ def get_animation_info(path):
     Returns:
         a dict with three elements:
             'animations' maps to a list of images,
-            'frame_length' maps to a float, how many game frames to display each
+            'frame_length' maps to a float, how many src frames to display each
                 animation frame
             'positions' maps to a list of 2-element tuples, the offset for each
                 frame in the animation
