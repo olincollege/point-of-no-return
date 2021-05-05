@@ -34,6 +34,8 @@ class Game:
         self.all_sprites = pygame.sprite.LayeredUpdates()
         self.all_sprites.add(self.player)
         self.create_new_obstacle(True)
+        self.score = 0
+        self.demons_killed = 0
 
     def create_new_demon(self):
         """
@@ -85,6 +87,7 @@ class Game:
         self.all_sprites.empty()
         self.all_sprites.add(self.player)
         self.create_new_obstacle(True)
+        self.score = 0
         self.running = True
         self.paused = False
 
@@ -94,22 +97,23 @@ class Game:
         damage to the player. Also creates new obstacles as the player moves
         forward or backward on the map.
         """
+        self.demons_killed = 0
+
         collisions = utils.spritecollide(self.player, self.demons)
         for demon in collisions:
             if utils.touching_sword(self.player, demon):
                 demon.damage(self.player.current_facing.value)
+                if demon.health <= 0:
+                    self.demons_killed += 1
+                    demon.kill()
             else:
                 if demon.current_direction == (0, 0):
                     self.player.damage(demon.current_facing.value)
                 else:
                     self.player.damage(demon.current_direction)
-
-        for demon in self.demons:
-            if demon.health <= 0:
-                demon.kill()
-
-        if self.player.health <= 0:
-            self.player.kill()
+            if self.player.health <= 0:
+                self.player.kill()
+        self.score += self.demons_killed
 
         for group in (self.all_sprites, self.demons, self.obstacles):
             for entity in group:

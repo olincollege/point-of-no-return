@@ -68,7 +68,11 @@ class PlayerController(Controller):
         Updates the player state based on user keyboard input
         """
         pressed_keys = pygame.key.get_pressed()
-        if not self.sprite.is_attacking:
+
+        # If the sprite is attacking, lock the player's movement
+        if self.sprite.is_attacking:
+            self.sprite.update((0, 0))
+        else:
             if pressed_keys[MOVES['attack']]:
                 self.sprite.attack()
             elif pressed_keys[MOVES['attack_up']]:
@@ -79,26 +83,22 @@ class PlayerController(Controller):
                 self.sprite.attack(Direction.LEFT)
             elif pressed_keys[MOVES['attack_right']]:
                 self.sprite.attack(Direction.RIGHT)
+            else:
+                direction = [pressed_keys[MOVES['right']]
+                             - pressed_keys[MOVES['left']],
+                             pressed_keys[MOVES['down']]
+                             - pressed_keys[MOVES['up']]]
+                if (direction[0] > 0 and self.sprite.rect.right >=
+                    constants.SCREEN_WIDTH) or (direction[0] < 0 and
+                                                self.sprite.rect.left <= 0):
+                    direction[0] = 0
 
-        # If the sprite is attacking, lock the player's movement
-        if self.sprite.is_attacking:
-            self.sprite.update((0, 0))
-        else:
-            direction = [pressed_keys[MOVES['right']]
-                         - pressed_keys[MOVES['left']],
-                         pressed_keys[MOVES['down']]
-                         - pressed_keys[MOVES['up']]]
-            if (direction[0] > 0 and self.sprite.rect.right >=
-                constants.SCREEN_WIDTH) or (direction[0] < 0 and
-                                            self.sprite.rect.left <= 0):
-                direction[0] = 0
+                if (direction[1] > 0 and self.sprite.rect.bottom >=
+                    constants.SCREEN_HEIGHT) or (direction[1] < 0 and
+                                                 self.sprite.rect.top <= 0):
+                    direction[1] = 0
 
-            if (direction[1] > 0 and self.sprite.rect.bottom >=
-                constants.SCREEN_HEIGHT) or (direction[1] < 0 and
-                                             self.sprite.rect.top <= 0):
-                direction[1] = 0
-
-            self.sprite.update((direction[0], direction[1]))
+                self.sprite.update((direction[0], direction[1]))
 
 
 class DemonController(Controller):

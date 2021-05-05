@@ -5,6 +5,7 @@ from abc import ABC, abstractmethod
 import pygame
 import pygame_menu
 import constants
+import sprites
 
 
 class View(ABC):
@@ -72,10 +73,23 @@ class GraphicView(View):
                                             theme=constants.GAME_THEME)
         self._start_menu.add.button('Play', self.start_game)
         self._start_menu.add.button('Quit', pygame_menu.events.EXIT)
+        self._end_menu.add.label(f'Score: {self._game.score}', label_id='score')
+        self._end_menu.get_widget('score')\
+            .update_font({'color': constants.GAME_THEME.selection_color,
+                          'size': constants.GAME_THEME.widget_font_size + 20})
         self._end_menu.add.button('Restart', self.restart_game)
-        self._end_menu.add.button('Quit', pygame_menu.events.EXIT)
+        self._end_menu.add.button('Main  Menu', self.main_menu)
         self._pause_menu.add.button('Resume', self.unpause)
         self._pause_menu.add.button('Main  Menu', self.main_menu)
+        pygame.mixer.music.load('../media/audio/background_music.mp3')
+        self._sound_effects = {
+            'player_attack': pygame.mixer.Sound(
+                '../media/audio/player_attack.wav'),
+            'player_hit': pygame.mixer.Sound(
+                '../media/audio/player_hit.wav'),
+            'demon_hit': pygame.mixer.Sound(
+                '../media/audio/demon_hit.wav')
+        }
 
     def setup(self):
         """
@@ -91,7 +105,9 @@ class GraphicView(View):
         if not self._start_menu.is_enabled():
             self._game.restart()
             self._pause_menu.disable()
+            self._end_menu.disable()
             self._start_menu.enable()
+        pygame.mixer.music.play(-1)
         self._start_menu.mainloop(self._screen)
 
     def start_game(self):
@@ -127,11 +143,24 @@ class GraphicView(View):
 
         if not self._game.player.alive():
             self._end_menu.enable()
+            self._end_menu.get_widget('score')\
+                .set_title(f'Score:  {self._game.score}')
             self._end_menu.mainloop(self._screen)
 
         # Display all entities
         for entity in self._game.all_sprites:
+            if isinstance(entity, sprites.Demon) and entity.invincibility_time\
+                    == constants.DEFAULT_INVINCIBILITY:
+                pygame.mixer.Sound.play(self._sound_effects['demon_hit'])
             self._screen.blit(entity.surf, entity.rect)
+
+        if self._game.player.invincibility_time ==\
+                constants.DEFAULT_INVINCIBILITY:
+            pygame.mixer.Sound.play(self._sound_effects['player_hit'])
+        if self._game.player.attack_started:
+            pygame.mixer.Sound.play(self._sound_effects['player_attack'])
+        if self._game.demons_killed > 0:
+            pygame.mixer.Sound.play(self._sound_effects['demon_hit'])
 
         # Lighting circle around player
         player_pos = self._game.player.rect.topleft
