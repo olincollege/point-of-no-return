@@ -4,8 +4,8 @@ View classes for Point of No Return
 from abc import ABC, abstractmethod
 import pygame
 import pygame_menu
-import constants
-import sprites
+import src.constants as constants
+import src.sprites as sprites
 
 
 class View(ABC):

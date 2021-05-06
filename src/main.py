@@ -2,10 +2,10 @@
 Main class with src loop for Point of No Return
 """
 import pygame
-import constants
-from controller import PlayerController, DemonController, ScrollController
-from game import Game
-from view import GraphicView
+import src.constants as constants
+from src.controller import PlayerController, DemonController, ScrollController
+from src.game import Game
+from src.view import GraphicView
 
 
 def main():

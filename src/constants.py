@@ -1,11 +1,11 @@
 """
 Constants for Point of No Return
 """
+from enum import IntEnum
 import pygame
 import pygame_menu.themes
-from pygame import locals
+from pygame import locals  # pylint: disable=redefined-builtin
 from pygame_menu.themes import Theme
-from enum import IntEnum
 
 
 class GameEvent(IntEnum):

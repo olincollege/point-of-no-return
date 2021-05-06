@@ -1,16 +1,15 @@
 """
 Point of No Return Game class
 """
-
 import math
 import random
 import pygame
-import constants
-import sprites
-import utils
+import src.constants as constants
+import src.sprites as sprites
+import src.utils as utils
 
 
-class Game:
+class Game:  # pylint: disable=too-many-instance-attributes
     """
     Holds the current src state
 

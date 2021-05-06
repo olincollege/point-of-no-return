@@ -1,13 +1,12 @@
 """
 Sprites in Point of No Return
 """
-
 from enum import Enum
 from math import atan2, pi
 import pygame
 from pygame.sprite import Sprite
-import constants
-import utils
+import src.constants as constants
+import src.utils as utils
 
 
 class Direction(Enum):
@@ -32,7 +31,7 @@ class Direction(Enum):
         return None
 
 
-class GameSprite(Sprite):
+class GameSprite(Sprite):  # pylint: disable=too-many-instance-attributes
     """
     A sprite class to represent any basic objects and characters
 
@@ -106,7 +105,7 @@ class GameSprite(Sprite):
         """
         return self._last_animation[1]
 
-    def update(self):
+    def update(self, *args, **kwargs):
         """
         Updates the character's current animation and does any other necessary
         changes to the character's state.
@@ -239,13 +238,19 @@ class MovingSprite(GameSprite):
             return self._animations[f'still_{repr(self.current_facing)}']
         return self._animations[repr(self.current_facing)]
 
-    def update(self, direction):
+    def set_direction(self, direction):
         """
-        Updates the character's current position and animation.
+        Sets the current direction
 
         Args:
             direction: tuple of 2 floats from -1 to 1, x/y coordinates of
                 target speed as percentage of max
+        """
+        self._current_direction = direction
+
+    def update(self, *args, **kwargs):
+        """
+        Updates the character's current position and animation.
         """
         super().update()
         # Detect obstacle collisions and move the sprite accordingly
@@ -253,15 +258,17 @@ class MovingSprite(GameSprite):
         for obstacle in collisions:
             threshold = self.rect.height * .25
             if (obstacle.rect.bottom <= self.rect.bottom <= obstacle.rect.bottom
-                    + threshold and direction[1] < 0)\
+                    + threshold and self.current_direction[1] < 0)\
                     or (obstacle.rect.bottom - threshold <= self.rect.bottom
-                        <= obstacle.rect.bottom and direction[1] > 0):
-                direction = (direction[0], 0)
-        self.move((direction[0] * self.frame_speed,
-                   direction[1] * self.frame_speed))
-        self._current_direction = direction
+                        <= obstacle.rect.bottom and
+                        self.current_direction[1] > 0):
+                self.set_direction((self.current_direction[0], 0))
+        # Move sprite in desired direction
+        self.move((self.current_direction[0] * self.frame_speed,
+                   self.current_direction[1] * self.frame_speed))
 
 
+# pylint: disable=too-many-instance-attributes
 class AttackingSprite(MovingSprite):
     """
     A sprite for a character that can attack
@@ -283,6 +290,7 @@ class AttackingSprite(MovingSprite):
         _knockback_direction: a tuple of two floats representing which direction
             the sprite is getting knocked back in
     """
+    # pylint: disable=too-many-arguments
     def __init__(self, game, speed, image_path, spawn_pos=None, max_health=1,
                  invincibility_time=constants.DEFAULT_INVINCIBILITY,
                  knockback_time=constants.DEFAULT_KNOCKBACK_TIME,
@@ -294,7 +302,6 @@ class AttackingSprite(MovingSprite):
         Args:
             game: a Game that contains all the sprites
             speed: int, the max character speed in pixels/second
-            fps: a float, how many animation frames to do each second
             spawn_pos: tuple of 2 ints, where to spawn this character, defaults
                 to top left
             image_path: string giving the path to the character art. Defaults
@@ -415,16 +422,18 @@ class AttackingSprite(MovingSprite):
         self._attacking = True
         self._animation_frame = 0
 
-    def update(self, direction):
+    def update(self, *args, **kwargs):
         """
         Updates the state of the sprite including animation and movement
         """
         # Handle the sprite getting knocked back by an attack
         if self._knockback > 0:
             step = self._knockback_dist/self._max_knockback / self.frame_speed
-            direction = (direction[0] + self._knockback_direction[0] * step,
-                         direction[1] + self._knockback_direction[1] * step)
-        super().update(direction)
+            self.set_direction((self.current_direction[0] +
+                                self._knockback_direction[0] * step,
+                                self.current_direction[1] +
+                                self._knockback_direction[1] * step))
+        super().update()
         # Handle the sprite attacking
         if self._attacking and self._animation_frame == len(
                     self.current_animation['animations']) * int(

@@ -3,9 +3,9 @@ Controllers for Point of No Return
 """
 from abc import ABC, abstractmethod
 import pygame
-import constants
-from constants import MOVES
-from sprites import Direction
+import src.constants as constants
+from src.constants import MOVES
+from src.sprites import Direction
 
 
 class Controller(ABC):
@@ -71,7 +71,8 @@ class PlayerController(Controller):
 
         # If the sprite is attacking, lock the player's movement
         if self.sprite.is_attacking:
-            self.sprite.update((0, 0))
+            self.sprite.set_direction((0,0))
+            self.sprite.update()
         else:
             if pressed_keys[MOVES['attack']]:
                 self.sprite.attack()
@@ -98,7 +99,8 @@ class PlayerController(Controller):
                                                  self.sprite.rect.top <= 0):
                     direction[1] = 0
 
-                self.sprite.update((direction[0], direction[1]))
+                self.sprite.set_direction(direction)
+                self.sprite.update()
 
 
 class DemonController(Controller):
@@ -126,7 +128,8 @@ class DemonController(Controller):
             dist = (direction[0] ** 2 + direction[1] ** 2) ** 0.5
             if dist == 0:
                 continue
-            demon.update((direction[0] / dist, direction[1] / dist))
+            demon.set_direction((direction[0] / dist, direction[1] / dist))
+            demon.update()
 
 
 class ScrollController(Controller):
