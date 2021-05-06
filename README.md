@@ -2,7 +2,7 @@
 A game by Ben and Allison.
 
 ## Overview
-Point of No Return is a 2D infinite world horror survival game. You play as **INSERT PLAYER NAME HERE**, fending for yourself while you navigate a strange world full of dangers you can't yet understand.
+Point of No Return is a 2D infinite world thriller survival game. You're left to fend for yourself while you navigate a strange world full of dangers you can't yet understand.
 
 ## Installation and Setup
 Clone this repository to your machine. From the command line, navigate to the `src/` directory. The game can then be run with the command `python main.py`. Alternatively, you can run `main.py` from your IDE.
