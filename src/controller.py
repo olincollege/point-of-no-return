@@ -71,8 +71,7 @@ class PlayerController(Controller):
 
         # If the sprite is attacking, lock the player's movement
         if self.sprite.is_attacking:
-            self.sprite.set_direction((0,0))
-            self.sprite.update()
+            self.sprite.set_direction((0, 0))
         else:
             if pressed_keys[MOVES['attack']]:
                 self.sprite.attack()
@@ -99,8 +98,8 @@ class PlayerController(Controller):
                                                  self.sprite.rect.top <= 0):
                     direction[1] = 0
 
-                self.sprite.set_direction(direction)
-                self.sprite.update()
+                self.sprite.set_direction((direction[0], direction[1]))
+        self.sprite.update()
 
 
 class DemonController(Controller):
