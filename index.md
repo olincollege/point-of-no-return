@@ -14,4 +14,4 @@ You play as NAME, who is thrown into a mysterious new world surrounded by demons
 Likes dogs, bikes, and food. Games are cool too, I guess
 
 ### Allison
-Washes her hair backwards
+Likes Rubik's Cubes, building stuff, and outdoor adventure. Also a band nerd.
