@@ -127,7 +127,10 @@ class DemonController(Controller):
             dist = (direction[0] ** 2 + direction[1] ** 2) ** 0.5
             if dist == 0:
                 continue
-            demon.set_direction((direction[0] / dist, direction[1] / dist))
+            scale = 1 / dist
+            if self.game.player.is_invincible:
+                scale *= constants.DEMON_SLOW_SCALE
+            demon.set_direction((direction[0] * scale, direction[1] * scale))
             demon.update()
 
 
