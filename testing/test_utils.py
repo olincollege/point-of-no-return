@@ -13,7 +13,7 @@ def test_animation_info():
     """
     pygame.init()
     _ = pygame.display.set_mode((1, 1))
-    info = utils.get_animation_info("test_animations")
+    info = utils.get_animation_info("../media/images/test_animations")
     assert len(info['animations']) == 4
     assert info['positions'] == [(1, 2), (3, 4), (5, 6), (7, 8)]
     assert info['frame_length'] == constants.FRAME_RATE / 5
