@@ -364,7 +364,7 @@ class AttackingSprite(MovingSprite):
         """
         Returns whether the sprite just started an attack
         """
-        return self.is_attacking and self._animation_frame == 0
+        return self.is_attacking and self._animation_frame <= 1
 
     @property
     def current_animation(self):

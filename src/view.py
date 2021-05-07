@@ -225,7 +225,7 @@ class GraphicView(View):
                           constants.HEALTH_BAR_HEIGHT))
         if self._game.player.is_invincible:
             if (self._game.player.invincibility_time //
-                constants.TRANSPARENT_TIME) % 2 == 0:
+                    constants.TRANSPARENT_TIME) % 2 == 0:
                 pygame.draw.rect(self._screen,
                                  constants.HEALTH_BAR_COLOR_1,
                                  (constants.HEALTH_BAR_POS[0]
