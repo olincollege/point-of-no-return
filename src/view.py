@@ -147,6 +147,8 @@ class GraphicView(View):
         """
         Start the src and disable the start menu
         """
+        for event in pygame.event.get():
+            continue  # clear any spawn demon events
         self._game.running = True
         self._start_menu.disable()
 
@@ -154,6 +156,8 @@ class GraphicView(View):
         """
         Restart the src and disable the end menu
         """
+        for event in pygame.event.get():
+            continue  # clear any spawn demon events
         self._game.restart()
         self._end_menu.disable()
 
