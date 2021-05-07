@@ -7,7 +7,7 @@ import pygame
 from pynput.keyboard import Key, Controller
 import pytest
 from src.constants import SCREEN_WIDTH, SCREEN_HEIGHT
-from src.controller import PlayerController, DemonController, ScrollController
+from src.controller import PlayerController, DemonController
 from src.game import Game
 from src.sprites import Direction, Demon
 
@@ -28,21 +28,34 @@ PC_MOVEMENT_CASES = [
     ('w', (0, -1)),
     ('a', (-1, 0)),
     ('s', (0, 1)),
-    ('d', (1, 0))
+    ('d', (1, 0)),
+    (('w', 's'), (0, 0)),
+    (('a', 'd'), (0, 0)),
+    (('w', 'a'), (-1, -1)),
+    (('w', 'd'), (1, -1)),
+    (('a', 's'), (-1, 1)),
+    (('s', 'd'), (1, 1)),
+    (('w', 'a', 's'), (-1, 0)),
+    (('w', 'd', 's'), (1, 0)),
+    (('a', 'w', 'd'), (0, -1)),
+    (('a', 's', 'd'), (0, 1)),
+    (('w', 'a', 's', 'd'), (0, 0))
 ]
 
 
-@pytest.mark.parametrize("key,direction", PC_MOVEMENT_CASES)
-def test_player_controller_movement(key, direction):
+@pytest.mark.parametrize("keys,direction", PC_MOVEMENT_CASES)
+def test_player_controller_movement(keys, direction):
     """
     Tests the movement for the player controller
     """
     game = empty_game()
     player = PlayerController(game)
-    kb = Controller()
-    kb.press(key)
+    keyboard = Controller()
+    for key in keys:
+        keyboard.press(key)
     player.update()
-    kb.release(key)
+    for key in keys:
+        keyboard.release(key)
     assert game.player.current_direction == direction
 
 
@@ -61,10 +74,10 @@ def test_player_controller_attack(key, direction):
     """
     game = empty_game()
     player = PlayerController(game)
-    kb = Controller()
-    kb.press(key)
+    keyboard = Controller()
+    keyboard.press(key)
     player.update()
-    kb.release(key)
+    keyboard.release(key)
     assert game.player.is_attacking and game.player.current_facing == direction
 
 
