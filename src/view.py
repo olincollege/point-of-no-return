@@ -134,6 +134,7 @@ class GraphicView(View):
             self._pause_menu.disable()
             self._end_menu.disable()
             self._start_menu.enable()
+            self._flashlight.rect.center = constants.FLASHLIGHT_RESET
         pygame.mixer.music.play(-1)
         self._start_menu.mainloop(self._screen)
 
@@ -162,6 +163,7 @@ class GraphicView(View):
             continue  # clear any spawn demon events
         self._game.restart()
         self._end_menu.disable()
+        self._flashlight.rect.center = constants.FLASHLIGHT_RESET
 
     def unpause(self):
         """

@@ -485,13 +485,20 @@ class Player(AttackingSprite):
                          max_health=constants.PLAYER_HEALTH,
                          invincibility_time=constants.PLAYER_INVINCIBILITY)
 
-    def move(self, delta_pos):
+    def set_direction(self, direction):
+        delta_pos = (direction[0] * self.frame_speed,
+                     direction[1] * self.frame_speed)
         if self.rect.left + delta_pos[0] < 0\
           or self.rect.right + delta_pos[0] > constants.SCREEN_WIDTH:
-            delta_pos = (0, delta_pos[1])
-        if self.rect.top + delta_pos[1] < 0\
+            self._current_direction = (0, direction[1])
+        elif self.rect.top + delta_pos[1] < 0\
            or self.rect.bottom + delta_pos[1] > constants.SCREEN_HEIGHT:
-            delta_pos = (delta_pos[0], 0)
+            self._current_direction = (direction[0], 0)
+        else:
+            self._current_direction = direction
+
+    def move(self, delta_pos):
+
         super().move(delta_pos)
 
 
