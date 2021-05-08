@@ -10,7 +10,7 @@ from pygame_menu.themes import Theme
 
 class GameEvent(IntEnum):
     """
-    Stores src event numbers
+    Stores game event numbers
     """
     ADD_DEMON = pygame.USEREVENT + 1
 

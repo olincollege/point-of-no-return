@@ -57,7 +57,7 @@ class GameSprite(Sprite):  # pylint: disable=too-many-instance-attributes
             game: a Game that holds all the sprites
             image_path: string giving the path to the character art
             spawn_pos: tuple of 2 ints, where to spawn this character, defaults
-                to top left
+                to the center of the screen
         """
         super().__init__()
         # Creates animations dictionary and a key for the still images
@@ -250,7 +250,8 @@ class MovingSprite(GameSprite):
 
     def update(self, *args, **kwargs):
         """
-        Updates the character's current position and animation.
+        Updates the character's current position and animation. Also detects
+        obstacle collisions and sets the direction accordingly.
         """
         super().update()
         # Detect obstacle collisions and move the sprite accordingly

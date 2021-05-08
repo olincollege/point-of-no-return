@@ -11,19 +11,21 @@ import src.utils as utils
 
 class Game:  # pylint: disable=too-many-instance-attributes
     """
-    Holds the current src state
+    Holds the current game state
 
     Attributes:
-        running: a boolean, True if the src is currently running, False if not
-        paused: a boolean, True if the src is paused, False if not
-        player: a Player sprite for the player in the src
+        running: a boolean, True if the game is currently running, False if not
+        paused: a boolean, True if the game is paused, False if not
+        player: a Player sprite for the player in the game
         demons: a LayeredUpdates Sprite Group of demons
         obstacles: a LayeredUpdates Sprite Group of obstacles
-        all_sprites: a LayeredUpdates Sprite Group of all sprites in the src
+        all_sprites: a LayeredUpdates Sprite Group of all sprites in the game
+        score: an int, tracks the player's score
+        demons_killed: an int, tracks how many demons the player has killed
     """
     def __init__(self):
         """
-        Initializes this instance of the src
+        Initializes this instance of the game
         """
         self.running = False
         self.paused = False
@@ -38,10 +40,10 @@ class Game:  # pylint: disable=too-many-instance-attributes
 
     def create_new_demon(self):
         """
-        Spawns a new demon in the src at a random location outside the screen.
+        Spawns a new demon in the game at a random location outside the screen.
         """
-        min_x = constants.SCREEN_WIDTH + constants.DEMON_MIN_SPAWN_DIST
-        min_y = constants.SCREEN_HEIGHT + constants.DEMON_MIN_SPAWN_DIST
+        min_x = constants.SCREEN_WIDTH/2 + constants.DEMON_MIN_SPAWN_DIST
+        min_y = constants.SCREEN_HEIGHT/2 + constants.DEMON_MIN_SPAWN_DIST
         dist = constants.DEMON_MAX_SPAWN_DIST - constants.DEMON_MIN_SPAWN_DIST
 
         theta = random.uniform(-math.pi, math.pi)
@@ -49,7 +51,7 @@ class Game:  # pylint: disable=too-many-instance-attributes
         is_x = abs(theta) < max_theta or abs(theta) > math.pi - max_theta
         trig = abs(math.cos(theta) if is_x else math.sin(theta))
 
-        min_rad = (min_x if is_x else min_y) / 2.0 / trig
+        min_rad = (min_x if is_x else min_y) / trig
         rad = random.uniform(min_rad, min_rad + dist / trig)
         spawn_pos = (rad * math.cos(theta) + constants.SCREEN_WIDTH / 2,
                      rad * math.sin(theta) + constants.SCREEN_HEIGHT / 2)
@@ -60,7 +62,7 @@ class Game:  # pylint: disable=too-many-instance-attributes
 
     def create_new_obstacle(self, is_top):
         """
-        Spawns a new obstacle in the src
+        Spawns a new obstacle in the game
 
         Args:
             is_top: a boolean, True if the obstacles should spawn above the
@@ -78,7 +80,7 @@ class Game:  # pylint: disable=too-many-instance-attributes
 
     def restart(self):
         """
-        Resets src state and restarts the src
+        Resets game state and restarts the game
         """
         self.player.reset()
         self.demons.empty()
@@ -92,7 +94,7 @@ class Game:  # pylint: disable=too-many-instance-attributes
 
     def update(self):
         """
-        Updates the src state, including checking attacks against demons and
+        Updates the game state, including checking attacks against demons and
         damage to the player. Also creates new obstacles as the player moves
         forward or backward on the map.
         """
