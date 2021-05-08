@@ -85,11 +85,18 @@ class GameSprite(Sprite):  # pylint: disable=too-many-instance-attributes
         return self._layer
 
     @property
+    def current_animation_name(self):
+        """
+        Returns the name of the current animation
+        """
+        return 'stills'
+
+    @property
     def current_animation(self):
         """
-        Returns the current animation type for the character
+        Returns the current animation type for the sprite
         """
-        return self._animations['stills']
+        return self._animations[self.current_animation_name]
 
     @property
     def last_animation(self):
@@ -151,8 +158,11 @@ class MovingSprite(GameSprite):
             motion of the screen
         _current_facing: a Direction (Up, Down, Left, Right), which way this
             sprite is currently facing
+        _obstacle_collisions: a boolean, whether to alter direction based on
+            obstacle collisions
     """
-    def __init__(self, game, speed, image_path, spawn_pos=None):
+    def __init__(self, game, speed, image_path, obstacle_collisions=True,
+                 spawn_pos=None):
         """
         Initializes the character by setting surf and rect, and setting the
         animation frame images.
@@ -181,6 +191,7 @@ class MovingSprite(GameSprite):
         self._speed = speed
         self._current_direction = (0, 0)
         self._current_facing = Direction.UP
+        self._obstacle_collisions = obstacle_collisions
 
     @property
     def speed(self):
@@ -230,13 +241,13 @@ class MovingSprite(GameSprite):
         return self._current_facing
 
     @property
-    def current_animation(self):
+    def current_animation_name(self):
         """
-        Returns the current animation type of the sprite based on the facing
+        Returns the current animation name of the sprite based on the facing
         """
         if self._current_direction == (0, 0):
-            return self._animations[f'still_{repr(self.current_facing)}']
-        return self._animations[repr(self.current_facing)]
+            return f'still_{repr(self.current_facing)}'
+        return repr(self.current_facing)
 
     def set_direction(self, direction):
         """
@@ -254,15 +265,17 @@ class MovingSprite(GameSprite):
         """
         super().update()
         # Detect obstacle collisions and move the sprite accordingly
-        collisions = utils.spritecollide(self, self._game.obstacles)
-        for obstacle in collisions:
-            threshold = self.rect.height * .25
-            if (obstacle.rect.bottom <= self.rect.bottom <= obstacle.rect.bottom
-                    + threshold and self.current_direction[1] < 0)\
-                    or (obstacle.rect.bottom - threshold <= self.rect.bottom
-                        <= obstacle.rect.bottom and
-                        self.current_direction[1] > 0):
-                self.set_direction((self.current_direction[0], 0))
+        if self._obstacle_collisions:
+            collisions = utils.spritecollide(self, self._game.obstacles)
+            for obstacle in collisions:
+                threshold = self.rect.height * .25
+                if (obstacle.rect.bottom <= self.rect.bottom <=
+                    obstacle.rect.bottom + threshold and
+                    self.current_direction[1] < 0) or\
+                        (obstacle.rect.bottom - threshold <= self.rect.bottom <=
+                         obstacle.rect.bottom and self.current_direction[1] >
+                         0):
+                    self.set_direction((self.current_direction[0], 0))
         # Move sprite in desired direction
         self.move((self.current_direction[0] * self.frame_speed,
                    self.current_direction[1] * self.frame_speed))
@@ -291,7 +304,8 @@ class AttackingSprite(MovingSprite):
             the sprite is getting knocked back in
     """
     # pylint: disable=too-many-arguments
-    def __init__(self, game, speed, image_path, spawn_pos=None, max_health=1,
+    def __init__(self, game, speed, image_path, obstacle_collisions=True,
+                 spawn_pos=None, max_health=1,
                  invincibility_time=constants.DEFAULT_INVINCIBILITY,
                  knockback_time=constants.DEFAULT_KNOCKBACK_TIME,
                  knockback_dist=constants.DEFAULT_KNOCKBACK_DIST):
@@ -314,7 +328,9 @@ class AttackingSprite(MovingSprite):
             knockback_dist: an int, the number of pixels the sprite gets knocked
                 back after being attacked
         """
-        super().__init__(game, speed, image_path, spawn_pos)
+        super().__init__(game, speed, image_path,
+                         obstacle_collisions=obstacle_collisions,
+                         spawn_pos=spawn_pos)
         # Add attacking animations
         path = f'{constants.IMAGE_FOLDER}/{image_path}'
         for animation in ("attack_up", "attack_down", "attack_left",
@@ -367,15 +383,15 @@ class AttackingSprite(MovingSprite):
         return self.is_attacking and self._animation_frame <= 1
 
     @property
-    def current_animation(self):
+    def current_animation_name(self):
         """
-        Returns the current animation type of the sprite
+        Returns the current animation name of the sprite
         """
         if self._knockback > 0:
-            return self._animations[f'still_{repr(self.current_facing)}']
+            return f'still_{repr(self.current_facing)}'
         if self.is_attacking:
-            return self._animations[f'attack_{repr(self.current_facing)}']
-        return super().current_animation
+            return f'attack_{repr(self.current_facing)}'
+        return super().current_animation_name
 
     @property
     def current_facing(self):
@@ -465,9 +481,9 @@ class Player(AttackingSprite):
         Args:
             game: a Game that contains all the sprites
         """
-        super().__init__(game, constants.PLAYER_SPEED, 'player', None,
-                         constants.PLAYER_HEALTH,
-                         constants.PLAYER_INVINCIBILITY)
+        super().__init__(game, constants.PLAYER_SPEED, 'player',
+                         max_health=constants.PLAYER_HEALTH,
+                         invincibility_time=constants.PLAYER_INVINCIBILITY)
 
     def move(self, delta_pos):
         if self.rect.left + delta_pos[0] < 0\
@@ -492,8 +508,33 @@ class Demon(AttackingSprite):
             spawn_pos: a tuple of 2 ints, where to spawn the demon, defaults
                 to the center of the screen
         """
-        super().__init__(game, constants.DEMON_SPEED, 'demon', spawn_pos,
-                         constants.DEMON_HEALTH, constants.DEMON_INVINCIBILITY)
+        super().__init__(game, constants.DEMON_SPEED, 'demon',
+                         spawn_pos=spawn_pos, max_health=constants.DEMON_HEALTH,
+                         invincibility_time=constants.DEMON_INVINCIBILITY)
+
+
+class Flashlight(MovingSprite):
+    """
+    A transparent sprite for the flashlight beam
+    """
+    def __init__(self, game):
+        """
+        Initializes the flashlight
+
+        Args:
+            game: a Game that contains all the sprites
+        """
+        super().__init__(game, constants.PLAYER_SPEED, 'flashlight',
+                         obstacle_collisions=False,
+                         spawn_pos=constants.FLASHLIGHT_SPAWN)
+
+    @property
+    def current_animation_name(self):
+        """
+        Returns the current animation name of the flashlight
+        """
+        player_ani = self._game.player.current_animation_name
+        return player_ani[player_ani.find('_') + 1:]
 
 
 class Obstacle(GameSprite):
@@ -509,4 +550,4 @@ class Obstacle(GameSprite):
             spawn_pos: a tuple of 2 ints, where to spawn the obstacle, defaults
                 to the center of the screen
         """
-        super().__init__(game, 'obstacle', spawn_pos)
+        super().__init__(game, 'obstacle', spawn_pos=spawn_pos)

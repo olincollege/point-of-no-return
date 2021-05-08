@@ -92,3 +92,21 @@ def spritecollide(sprite, group):
     return pygame.sprite.spritecollide(sprite, group, False,
                                        collided=lambda s1, s2: pygame.sprite
                                        .collide_mask(s1, s2) is not None)
+
+
+def blit_alpha(target, source, location, opacity, special_flags=None):
+    """
+    Blits the source onto the target at the specified location and opacity
+
+    Args:
+        target: a Surface to blit onto
+        source: a Surface that gets made transparent and is put on target
+        location: an (x, y) tuple, where to put source on target
+        opacity: an int from 0-255, what to set alpha to
+        special_flags: optional, any special flags from pygame to pass to blit
+    """
+    temp = pygame.Surface((source.get_width(), source.get_height()),
+                          pygame.SRCALPHA)
+    temp.fill((0, 0, 0, opacity))
+    temp.blit(source, (0, 0), special_flags=pygame.BLEND_RGBA_MIN)
+    target.blit(temp, location, special_flags=special_flags)

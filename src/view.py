@@ -6,6 +6,7 @@ import pygame
 import pygame_menu
 import src.constants as constants
 import src.sprites as sprites
+from src.utils import blit_alpha
 
 
 class View(ABC):
@@ -114,6 +115,7 @@ class GraphicView(View):
             'demon_hit': pygame.mixer.Sound(
                 f'{constants.AUDIO_FOLDER}/demon_hit.wav')
         }
+        self._flashlight = sprites.Flashlight(self._game)
 
     def setup(self):
         """
@@ -200,20 +202,15 @@ class GraphicView(View):
             pygame.mixer.Sound.play(self._sound_effects['demon_hit'])
 
         # Lighting circle around player
-        player_pos = self._game.player.rect.topleft
-        pos_offset = self._game.player.last_animation['positions']\
-            [self._game.player.last_frame]
-        player_pos = (player_pos[0] + pos_offset[0],
-                      player_pos[1] + pos_offset[1])
-        light = pygame.Surface(constants.SCREEN_SIZE, pygame.SRCALPHA)
-        light.fill((0, 0, 0, 0))
-        pygame.draw.circle(light, (0, 0, 0, constants.LIGHT_DIFF), player_pos,
-                           constants.LIGHT_SIZE)
-
         dark = pygame.Surface(constants.SCREEN_SIZE, pygame.SRCALPHA)
         dark.fill((0, 0, 0, constants.DARKNESS))
 
-        dark.blit(light, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
+        flash_direction = self._game.player.current_direction
+        flash_direction = (flash_direction[0], 0)
+        self._flashlight.set_direction(flash_direction)
+        self._flashlight.update()
+        blit_alpha(dark, self._flashlight.surf, self._flashlight.rect.topleft,
+                   constants.LIGHT_DIFF, special_flags=pygame.BLEND_RGBA_SUB)
         self._screen.blit(dark, (0, 0))
 
         # Health bar
