@@ -25,3 +25,15 @@ Likes dogs, bikes, and food. Games are cool too, I guess
 
 ### Allison
 Likes Rubik's Cubes, building stuff, and outdoor adventure. Also a band nerd.
+
+## Game Media Credits
+Images:
+* [Blood Drip](http://clipart-library.com/clipart/n897862.htm)
+* [Demon Sprite](https://www.deviantart.com/studiofallen/art/Demon-Sprite-Sheet-437061869) by StudioFallen on DeviantArt
+* [Boulder](https://line.17qq.com/articles/dkgkgkgdv_p5.html)
+
+Audio:
+
+Background music- ["Ghosts in the wind"](http://dig.ccmixter.org/files/Citizen_X0/29247) by Abstract Audio on digiccMixter
+
+Sound effects- Licensed for free use from [Mixkit](https://mixkit.co/)
