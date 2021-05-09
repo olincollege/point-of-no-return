@@ -183,6 +183,7 @@ class GraphicView(View):
             self._pause_menu.mainloop(self._screen)
 
         if not self._game.player.alive():
+            pygame.mixer.Sound.play(self._sound_effects['player_hit'])
             self._end_menu.enable()
             self._end_menu.get_widget('score')\
                 .set_title(f'Score:  {self._game.score}')
