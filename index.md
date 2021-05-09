@@ -12,9 +12,9 @@ Point of No Return is a 2D infinite-world survival thriller game. Fend for yours
 You play as Luke, who is thrown into a mysterious new world surrounded by demons - watch out!
 
 ### Demo
-Click the image for a video demo!
+Click below for a video demo!
 
-[![Game Demo](game.jpg)](https://youtu.be/d-8AaGryPmE)
+[![Game Demo](game.png)](https://youtu.be/d-8AaGryPmE)
 
 ## The Authors
 ### Ben
