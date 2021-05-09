@@ -4,10 +4,12 @@ Point of No Return is a 2D infinite-world survival thriller game. Fend for yours
 
 [Come save the world!](https://github.com/olincollege/point-of-no-return)
 
-*Installation instructions included in the **Installation and Setup** and **Libraries and Packages** sections of the [README](https://github.com/olincollege/point-of-no-return/blob/main/README.md)*
+*Installation instructions included in the **Installation and Setup** and **Libraries and Packages** sections of the [README](https://github.com/olincollege/point-of-no-return/blob/main/README.md)*.
 
 ## The Game
 ![Player](player.png)
+![Demon](demon.png)
+![Obstacle](obstacle.png)
 
 You play as Luke, who is thrown into a mysterious new world surrounded by demons - watch out!
 
