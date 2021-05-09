@@ -14,7 +14,7 @@ You play as Luke, who is thrown into a mysterious new world surrounded by demons
 ### Demo
 Click below for a video demo!
 
-<iframe width="1264" height="480" src="https://www.youtube.com/embed/d-8AaGryPmE" title="Point of No Return Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="632" height="240" src="https://www.youtube.com/embed/d-8AaGryPmE" title="Point of No Return Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 
 ## The Authors
