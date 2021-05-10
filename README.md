@@ -12,10 +12,6 @@ Our game is built using [PyGame](https://www.pygame.org/), a Python wrapper for 
 
 `$ pip install pygame pygame-menu`
 
-For testing purposes, we also used [Pynput](https://pynput.readthedocs.io/en/latest/) to control the keyboard. To use the test folders, run the following command:
-
-`$ pip install pynput`
-
 ## Included Files
 `/src`: Contains all source code files for the game (`.py`)
 * `sprites.py`: All sprite classes for the game, including basic `GameSprite`, and subclasses `MovingSprite` and `AttackingSprite`. `Player`, `Demon` and `Obstacle` are all subclasses of one of the three larger sprite classes.
