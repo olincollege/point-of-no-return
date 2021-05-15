@@ -11,7 +11,7 @@ from src.utils import blit_alpha
 
 class View(ABC):
     """
-    Handles the drawing of the src
+    Handles the drawing of the game
 
     Attributes:
         _game: the Game to display with this class
@@ -35,19 +35,23 @@ class View(ABC):
     @abstractmethod
     def draw(self):
         """
-        Draws the src based on current state
+        Draws the game based on current state
         """
         return
 
 
 class GraphicView(View):
     """
-    Draws src in pygame graphic window
+    Draws game in pygame graphic window
 
     Attributes:
-        _screen: a screen to display the src items on
-        _start_menu: a pygame_menu with the start menu for the src
-        _end_menu: a pygame_menu with the end menu for the src
+        _screen: a screen to display the game items on
+        _start_menu: a pygame_menu with the start menu for the game
+        _controls_menu: a pygame_menu to display the controls for the game
+        _pause_menu: a pygame_menu that displays when paused
+        _end_menu: a pygame_menu with the end menu for the game
+        _sound_effects: a dict mapping actions (strings) to Sounds
+        _flashlight: a Flashlight beam to draw on the screen
     """
 
     def __init__(self, game, screen):
@@ -126,7 +130,7 @@ class GraphicView(View):
 
     def main_menu(self):
         """
-        Sets up start menu
+        Sets up start menu, resetting anything from the end menu
         """
         if not self._start_menu.is_enabled():
             self._game.restart()
@@ -148,7 +152,7 @@ class GraphicView(View):
 
     def start_game(self):
         """
-        Start the src and disable the start menu
+        Start the game and disable the start menu
         """
         for event in pygame.event.get():
             continue  # clear any spawn demon events
@@ -157,7 +161,7 @@ class GraphicView(View):
 
     def restart_game(self):
         """
-        Restart the src and disable the end menu
+        Restart the game and disable the end menu
         """
         for event in pygame.event.get():
             continue  # clear any spawn demon events
@@ -167,14 +171,14 @@ class GraphicView(View):
 
     def unpause(self):
         """
-        Unpause the src and disable the pause menu
+        Unpause the game and disable the pause menu
         """
         self._game.paused = False
         self._pause_menu.disable()
 
     def draw(self):
         """
-        Displays the current src state
+        Displays the current game state
         """
         self._screen.fill((255, 0, 0))
 
