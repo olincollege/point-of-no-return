@@ -10,7 +10,7 @@ from pygame_menu.themes import Theme
 
 class GameEvent(IntEnum):
     """
-    Stores src event numbers
+    Stores game event numbers
     """
     ADD_DEMON = pygame.USEREVENT + 1
 
@@ -80,7 +80,6 @@ LIGHT = 170
 LIGHT_DIFF = DARKNESS - LIGHT
 LIGHT_SIZE = 175
 FLASHLIGHT_SPAWN = (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 130)
-FLASHLIGHT_RESET = FLASHLIGHT_SPAWN
 
 # Spawn info
 DEMON_SPAWN_TIME = 3000

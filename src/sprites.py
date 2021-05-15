@@ -39,6 +39,7 @@ class GameSprite(Sprite):  # pylint: disable=too-many-instance-attributes
         surf: a pygame surface, the display image for the sprite
         rect: a pygame rectangle, defines the position of the sprite
         mask: a pygame mask, defines the hit-box for the sprite from the surf
+        _spawn_pos: a tuple of two ints, the spawn position of the sprite
         _animations: a dictionary with animation sequence names as keys and
             dictionaries with the information for each animation sequence
             (images, center positions, animation frame rate)
@@ -57,7 +58,7 @@ class GameSprite(Sprite):  # pylint: disable=too-many-instance-attributes
             game: a Game that holds all the sprites
             image_path: string giving the path to the character art
             spawn_pos: tuple of 2 ints, where to spawn this character, defaults
-                to top left
+                to the center of the screen
         """
         super().__init__()
         # Creates animations dictionary and a key for the still images
@@ -70,8 +71,11 @@ class GameSprite(Sprite):  # pylint: disable=too-many-instance-attributes
         if spawn_pos is None:
             self.rect = self.surf.get_rect(center=(constants.SCREEN_WIDTH / 2,
                                                    constants.SCREEN_HEIGHT / 2))
+            self._spawn_pos = (constants.SCREEN_WIDTH / 2,
+                               constants.SCREEN_HEIGHT / 2)
         else:
             self.rect = self.surf.get_rect(center=spawn_pos)
+            self._spawn_pos = spawn_pos
         self.mask = pygame.mask.from_surface(self.surf)
         self._last_animation = (self._animations["stills"], 0)
         self._layer = self.rect.bottom
@@ -111,6 +115,12 @@ class GameSprite(Sprite):  # pylint: disable=too-many-instance-attributes
         Returns the frame number the last animation was on
         """
         return self._last_animation[1]
+
+    def reset(self):
+        """
+        Reset the sprite attributes
+        """
+        self.rect.center = self._spawn_pos
 
     def update(self, *args, **kwargs):
         """
@@ -249,6 +259,14 @@ class MovingSprite(GameSprite):
             return f'still_{repr(self.current_facing)}'
         return repr(self.current_facing)
 
+    def reset(self):
+        """
+        Reset the sprite attributes
+        """
+        super().reset()
+        self._current_direction = (0, 0)
+        self._current_facing = Direction.UP
+
     def set_direction(self, direction):
         """
         Sets the current direction
@@ -261,7 +279,8 @@ class MovingSprite(GameSprite):
 
     def update(self, *args, **kwargs):
         """
-        Updates the character's current position and animation.
+        Updates the character's current position and animation. Also detects
+        obstacle collisions and sets the direction accordingly.
         """
         super().update()
         # Detect obstacle collisions and move the sprite accordingly
@@ -407,12 +426,9 @@ class AttackingSprite(MovingSprite):
 
     def reset(self):
         """
-        Reset sprite attributes
+        Resets the sprite attributes
         """
-        self.rect.center = (constants.SCREEN_WIDTH / 2,
-                            constants.SCREEN_HEIGHT / 2)
-        self._current_direction = (0, 0)
-        self._current_facing = Direction.UP
+        super().reset()
         self._attacking = False
         self._health = self._max_health
         self._invincibility = 0
