@@ -2,6 +2,7 @@
 Constants for Point of No Return
 """
 from enum import IntEnum
+import os
 import pygame
 import pygame_menu.themes
 from pygame import locals  # pylint: disable=redefined-builtin
@@ -22,8 +23,9 @@ SCREEN_SIZE = (SCREEN_WIDTH, SCREEN_HEIGHT)
 FRAME_RATE = 60
 
 # Media constants
-IMAGE_FOLDER = '../media/images'
-AUDIO_FOLDER = '../media/audio'
+current_dir = os.path.dirname(__file__)
+IMAGE_FOLDER = os.path.join(current_dir, '../media/images')
+AUDIO_FOLDER = os.path.join(current_dir, '../media/audio')
 
 # Menu constants
 GAME_THEME = Theme(
