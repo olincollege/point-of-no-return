@@ -314,7 +314,8 @@ class AttackingSprite(MovingSprite):
             invincibility after being attacked
         _invincibility: an int representing how many more frames this sprite is
             invincible for
-        _max_knockback: an int representing how
+        _max_knockback: an int representing the maximum number of frames this
+            sprite will be knocked back for
         _knockback: an int representing how many more frames this sprite is
             being knocked-back for
         _knockback_dist: an int representing how many pixels the sprite gets
@@ -330,7 +331,7 @@ class AttackingSprite(MovingSprite):
                  knockback_dist=constants.DEFAULT_KNOCKBACK_DIST):
         """
         Initializes the character by setting surf and rect, and setting the
-        animation images.
+        animation images and other attributes
 
         Args:
             game: a Game that contains all the sprites
@@ -339,6 +340,8 @@ class AttackingSprite(MovingSprite):
                 to top left
             image_path: string giving the path to the character art. Defaults
                 to None, which will set a white 50x50 square
+            obstacle_collisions: whether this sprite will be stopped by
+                obstacles
             max_health: int representing the max health of the sprite
             invincibility_time: a float, the time in seconds that this sprite
                 is invincible for after being attacked.
@@ -404,7 +407,7 @@ class AttackingSprite(MovingSprite):
     @property
     def current_animation_name(self):
         """
-        Returns the current animation name of the sprite
+        Returns the current animation name of the sprite as a string
         """
         if self._knockback > 0:
             return f'still_{repr(self.current_facing)}'
@@ -433,7 +436,11 @@ class AttackingSprite(MovingSprite):
 
     def damage(self, attack_direction):
         """
-        Damages the sprite by removing 1 from its health
+        Damages the sprite by removing 1 from its health and initiates knockback
+
+        Args:
+            attack_direction: an (x, y) tuple that gives the way the attack was
+                taken (and the way this sprite will be knocked back)
         """
         if self.is_invincible:
             return
@@ -447,6 +454,10 @@ class AttackingSprite(MovingSprite):
     def attack(self, direction=None):
         """
         Initiates an attack
+
+        Args:
+            direction: which way to start the attack. Defaults to the current
+                way the sprite is facing
         """
         if direction is None:
             direction = self.current_facing
@@ -502,6 +513,13 @@ class Player(AttackingSprite):
                          invincibility_time=constants.PLAYER_INVINCIBILITY)
 
     def set_direction(self, direction):
+        """
+        Sets the current direction and ensures that it can't go off screen
+
+        Args:
+            direction: tuple of 2 floats from -1 to 1, x/y coordinates of
+                target speed as percentage of max
+        """
         delta_pos = (direction[0] * self.frame_speed,
                      direction[1] * self.frame_speed)
         if self.rect.left + delta_pos[0] < 0\
@@ -512,10 +530,6 @@ class Player(AttackingSprite):
             self._current_direction = (direction[0], 0)
         else:
             self._current_direction = direction
-
-    def move(self, delta_pos):
-
-        super().move(delta_pos)
 
 
 class Demon(AttackingSprite):
@@ -562,7 +576,7 @@ class Flashlight(MovingSprite):
 
 class Obstacle(GameSprite):
     """
-    A sprite for src obstacles
+    A sprite for game obstacles
     """
     def __init__(self, game, spawn_pos=None):
         """
